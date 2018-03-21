@@ -14,5 +14,12 @@ Wireframes:
 Backend:
 Other than the data from Citibike, there won't be a back end.
 
+Implementation Timeline:
+
+1st) Allow for one ride to be displayed on the Google Maps API 
+
+2hd) Allow for multiple rides to be displayed on the Google Maps API
+
+3rd: Allow for the additional visual features to be displayed, where you can see what direction cyclists are going based on their colors.
 
   
