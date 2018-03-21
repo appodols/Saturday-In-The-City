@@ -1,0 +1,17 @@
+Note..we keep the bundle at the bottom of the text-file so that it renders last!
+
+There were 2 options to rendering things..a JQuery, which renders on load?
+
+
+importing and exporting is about where you need to use files
+
+put files in a sub-folder, and have a main file from that subgile
+
+//must load libraries in index html file
+//look through D3 docs
+
+//requires files in entry
+//as soon as the window loads content, he sets up listeners
+
+//window.documentLoaded will wait more time small difference
+//look up ready state change
