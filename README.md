@@ -1,7 +1,9 @@
-# CityBikeVisulization
+# Saturday in the City
 MVP:
 
-This app will allow for users to see daily citibike usage, as well as what direction CitiBike users are going in.  The directions will be 'uptown','downtown','or across-town.'  Users will be represented as dots on a Google Maps API.
+This app will allow for users to see the daily taxi-trips from Green taxi on a Saturday in 2016, starting at sunrise, and going until sunrise the following Sunday.  
+
+Users will be represented as dots on a Google Maps API.
 
 Technologies, Libraries, APIs:
 
@@ -12,7 +14,7 @@ Wireframes:
 
 
 Backend:
-Other than the data from Citibike, there won't be a back end.
+Other than the data from NYCData, there won't be a back end.
 
 Implementation Timeline:
 
