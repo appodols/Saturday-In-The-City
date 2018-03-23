@@ -15,3 +15,6 @@ put files in a sub-folder, and have a main file from that subgile
 
 //window.documentLoaded will wait more time small difference
 //look up ready state change
+
+
+response.routes[0].overview_path[0].lat()

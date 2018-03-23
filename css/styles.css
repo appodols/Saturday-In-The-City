@@ -1,5 +1,19 @@
 #map{
   height: 700px;
-  width: 600px;
+  width: 900px;
   background-color: green;
+}
+
+
+.page {
+  display: flex;
+}
+
+
+.clock{
+  width: 200px;
+  height: 50px;
+  background-color: green;
+  margin-right: 5px;
+  align-self: center;
 }
