@@ -12,12 +12,14 @@ class Visuals {
     this.addTrips = this.addTrips.bind(this);
     this.incrementTrips = this.incrementTrips.bind(this);
     this.nextRideStarted = this.nextRideStarted.bind(this);
+    this.pauseClock = this.pauseClock.bind(this);
+    this.paused = false;
   }
 
 
   addTrips(){
     while(this.nextRideStarted()){
-      let currentTrip = new Trip(data[this.dataIndex]);
+      let currentTrip = new Trip(data[this.dataIndex], map);
       this.dataIndex += 1;
       this.currentTrips.push(currentTrip);
     }
@@ -32,20 +34,32 @@ class Visuals {
 
 
   incrementTrips(){
-    //goes through trips and forEach trip
-    //increments the trip
+    this.currentTrips.forEach(trip=>{
+      trip.increment();
+    });
   }
 
   startClock (){
     let clock = document.getElementById("clock");
     setInterval( ()=>{
-      this.time.add(1, 's');
-      this.nextRideStarted();
-      this.addTrips();
-      clock.innerHTML = this.time.format("HH mm ss");
+      if(!this.paused){
+        debugger
+        this.time.add(1, 's');
+        this.incrementTrips();
+        this.addTrips();
+        clock.innerHTML = this.time.format("HH mm ss");
+      }
     }, 1000);
 
   }
+
+
+  pauseClock () {
+    debugger
+    this.paused = !this.paused;
+    debugger
+  }
+
 
 
   nextRideStarted(){
@@ -65,7 +79,7 @@ class Visuals {
 
   setup(){
     $(".start-clock").on('click', this.startClock);
-
+    $(".pause-clock").on('click', this.pauseClock);
   }
 
 

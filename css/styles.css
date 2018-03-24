@@ -34,3 +34,10 @@
   font-size: 14px;
 
 }
+
+.pause-clock{
+  height: 50px;
+  width: 100%;
+  background-color: red;
+  font-size: 14px;
+}

@@ -16339,6 +16339,7 @@ function initMap() {
   // cityCircle.setCenter({lat: 38.933583 , lng: -77.045484 });
   // cityCircle.setMap(map);
   window.map = map;
+  // calcRoute();
 }
 
 function calcRoute() {
@@ -16355,6 +16356,7 @@ function calcRoute() {
     if (status == google.maps.DirectionsStatus.OK) {
       directionsDisplay.setDirections(response);
       directionsDisplay.setMap(map);
+      debugger;
     }
   });
 }
@@ -18046,13 +18048,15 @@ var Visuals = function () {
     this.addTrips = this.addTrips.bind(this);
     this.incrementTrips = this.incrementTrips.bind(this);
     this.nextRideStarted = this.nextRideStarted.bind(this);
+    this.pauseClock = this.pauseClock.bind(this);
+    this.paused = false;
   }
 
   _createClass(Visuals, [{
     key: 'addTrips',
     value: function addTrips() {
       while (this.nextRideStarted()) {
-        var currentTrip = new _trip2.default(data[this.dataIndex]);
+        var currentTrip = new _trip2.default(data[this.dataIndex], map);
         this.dataIndex += 1;
         this.currentTrips.push(currentTrip);
       }
@@ -18067,8 +18071,9 @@ var Visuals = function () {
   }, {
     key: 'incrementTrips',
     value: function incrementTrips() {
-      //goes through trips and forEach trip
-      //increments the trip
+      this.currentTrips.forEach(function (trip) {
+        trip.increment();
+      });
     }
   }, {
     key: 'startClock',
@@ -18077,11 +18082,21 @@ var Visuals = function () {
 
       var clock = document.getElementById("clock");
       setInterval(function () {
-        _this.time.add(1, 's');
-        _this.nextRideStarted();
-        _this.addTrips();
-        clock.innerHTML = _this.time.format("HH mm ss");
+        if (!_this.paused) {
+          debugger;
+          _this.time.add(1, 's');
+          _this.incrementTrips();
+          _this.addTrips();
+          clock.innerHTML = _this.time.format("HH mm ss");
+        }
       }, 1000);
+    }
+  }, {
+    key: 'pauseClock',
+    value: function pauseClock() {
+      debugger;
+      this.paused = !this.paused;
+      debugger;
     }
   }, {
     key: 'nextRideStarted',
@@ -18096,6 +18111,7 @@ var Visuals = function () {
     key: 'setup',
     value: function setup() {
       $(".start-clock").on('click', this.startClock);
+      $(".pause-clock").on('click', this.pauseClock);
     }
   }]);
 
@@ -18409,28 +18425,91 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 /*jshint esversion: 6 */
 
-var Trip = function Trip(row) {
-  _classCallCheck(this, Trip);
+var Trip = function () {
+  function Trip(row, map) {
+    _classCallCheck(this, Trip);
 
-  this.row = row;
-}
+    this.row = row;
+    this.map = map;
+    this.setup = this.setup.bind(this);
+    this.uptownRide = this.uptownRide.bind(this);
+    this.pickupLong = parseFloat(this.row[5]);
+    this.pickupLat = parseFloat(this.row[6]);
+    this.endLong = parseFloat(this.row[7]);
+    this.endLat = parseFloat(this.row[8]);
+    this.setupCircle = this.setupCircle.bind(this);
+    this.setupDirections = this.setupDirections.bind(this);
+    this.setup();
+  }
 
-// increment(){
-//   //increment...if you are at the end delete yourself from trips
-//
-//
-//
-// }
+  //we are making a temporary method called setup
+  //that gets the colors and sets the location
 
-//questions...a) when the object is created, I make it with a) a starting location, and b) ending location
-//c) use Google maps to figure out the overview_paths, and then have to somehow map over them
+  _createClass(Trip, [{
+    key: 'uptownRide',
+    value: function uptownRide() {
+      return this.endLat > this.pickupLat;
+    }
+  }, {
+    key: 'setupDirections',
+    value: function setupDirections() {
+      var directionsService = new google.maps.DirectionsService();
+      var directionsDisplay = new google.maps.DirectionsRenderer();
+      var request = {
+        origin: new google.maps.LatLng(this.pickupLat, this.pickupLong),
+        destination: new google.maps.LatLng(this.endLat, this.endLong),
+        travelMode: google.maps.TravelMode.DRIVING
+      };
+      directionsService.route(request, function (response, status) {
+        if (status == google.maps.DirectionsStatus.OK) {
+          directionsDisplay.setDirections(response);
+          directionsDisplay.setMap(this.map);
+          var steps = response.routes[0].legs[0].steps;
+        }
+      });
+      this.steps = steps;
+    }
+  }, {
+    key: 'setup',
+    value: function setup() {
+      this.setupCircle();
+      this.setupDirections();
+      debugger;
+    }
+  }, {
+    key: 'setupCircle',
+    value: function setupCircle() {
+      var Circle = new google.maps.Circle({
+        strokeColor: this.uptownRide() ? '#FF0000' : '#00e1ff',
+        strokeOpacity: 0.8,
+        strokeWeight: 2,
+        fillColor: this.uptownRide() ? '#FF0000' : '#00e1ff',
+        fillOpacity: 0.35,
+        center: { lat: this.pickupLat, lng: this.pickupLong },
+        radius: 10
+      });
+      Circle.setMap(this.map);
+    }
+  }, {
+    key: 'increment',
+    value: function increment() {}
+
+    //questions...a) when the object is created,
+    //I make it with a) a starting location, and b) ending location
+    //c) use Google maps to
+    //figure out the overview_paths, and then have to somehow map over them
 
 
-;
+  }]);
+
+  return Trip;
+}();
 
 exports.default = Trip;
 

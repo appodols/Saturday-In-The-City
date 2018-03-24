@@ -46,6 +46,7 @@ export default function initMap() {
   // cityCircle.setCenter({lat: 38.933583 , lng: -77.045484 });
   // cityCircle.setMap(map);
   window.map = map;
+  // calcRoute();
 }
 
 
@@ -65,6 +66,7 @@ function calcRoute() {
     if (status == google.maps.DirectionsStatus.OK) {
         directionsDisplay.setDirections(response);
         directionsDisplay.setMap(map);
+        debugger
     }
   });
 }
