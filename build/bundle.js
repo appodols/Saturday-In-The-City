@@ -16273,7 +16273,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 document.addEventListener("DOMContentLoaded", function () {
   (0, _init_map2.default)();
   (0, _load_data2.default)();
-  var visuals = new _visuals2.default();
+  var viz = new _visuals2.default();
+  viz.setup();
 });
 
 //what will start doing the loading
@@ -16343,9 +16344,10 @@ function initMap() {
 function calcRoute() {
   var app_academy = new google.maps.LatLng(40.754475, -73.984438);
   var washington_dc = new google.maps.LatLng(38.933583, -77.045484);
+  var los_angeles = new google.maps.LatLng(34.0522, -118.2437);
   var home = new google.maps.LatLng(40.708426, -74.005820);
   var request = {
-    origin: app_academy,
+    origin: los_angeles,
     destination: home,
     travelMode: google.maps.TravelMode.DRIVING
   };
@@ -16393,7 +16395,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function loadData() {
   $.get({
-    url: '../data/taxi_2.csv'
+    url: '../data/taxi_formatted_1.csv'
   }).then(function (file) {
     _papaparse2.default.parse(file, {
       complete: function complete(results) {
@@ -18017,20 +18019,88 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /*jshint esversion: 6 */
+
+
 var _moment = __webpack_require__(0);
 
 var _moment2 = _interopRequireDefault(_moment);
 
+var _trip = __webpack_require__(130);
+
+var _trip2 = _interopRequireDefault(_trip);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } } /*jshint esversion: 6 */
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+var Visuals = function () {
+  function Visuals() {
+    _classCallCheck(this, Visuals);
 
-var Visuals = function Visuals() {
-  _classCallCheck(this, Visuals);
+    this.time = (0, _moment2.default)("2016-06-04 05:24:00");
+    this.interval = 300;
+    this.startClock = this.startClock.bind(this);
+    this.currentTrips = [];
+    this.dataIndex = 1;
+    this.addTrips = this.addTrips.bind(this);
+    this.incrementTrips = this.incrementTrips.bind(this);
+    this.nextRideStarted = this.nextRideStarted.bind(this);
+  }
 
-  this.time = (0, _moment2.default)("2016-06-04 05:24:00");
-};
+  _createClass(Visuals, [{
+    key: 'addTrips',
+    value: function addTrips() {
+      while (this.nextRideStarted()) {
+        var currentTrip = new _trip2.default(data[this.dataIndex]);
+        this.dataIndex += 1;
+        this.currentTrips.push(currentTrip);
+      }
+
+      //gets time
+      //starts with index
+      //while loop
+      //goes through array adding items to this.trips while starting time is less than the current time
+      // I make a new Trip Object and add it to this.trips
+      //we handle the logic for deleting the trip from the trip class
+    }
+  }, {
+    key: 'incrementTrips',
+    value: function incrementTrips() {
+      //goes through trips and forEach trip
+      //increments the trip
+    }
+  }, {
+    key: 'startClock',
+    value: function startClock() {
+      var _this = this;
+
+      var clock = document.getElementById("clock");
+      setInterval(function () {
+        _this.time.add(1, 's');
+        _this.nextRideStarted();
+        _this.addTrips();
+        clock.innerHTML = _this.time.format("HH mm ss");
+      }, 1000);
+    }
+  }, {
+    key: 'nextRideStarted',
+    value: function nextRideStarted() {
+      var nextTrip = data[this.dataIndex];
+      var nextStartTime = nextTrip[1];
+      var formatting = "MM-DD-YYYY hh:mm:ss a";
+      var nextTripMoment = (0, _moment2.default)(nextStartTime, formatting);
+      return nextTripMoment.isBefore(this.time);
+    }
+  }, {
+    key: 'setup',
+    value: function setup() {
+      $(".start-clock").on('click', this.startClock);
+    }
+  }]);
+
+  return Visuals;
+}();
 
 exports.default = Visuals;
 
@@ -18327,6 +18397,42 @@ webpackContext.keys = function webpackContextKeys() {
 webpackContext.resolve = webpackContextResolve;
 module.exports = webpackContext;
 webpackContext.id = 129;
+
+/***/ }),
+/* 130 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/*jshint esversion: 6 */
+
+var Trip = function Trip(row) {
+  _classCallCheck(this, Trip);
+
+  this.row = row;
+}
+
+// increment(){
+//   //increment...if you are at the end delete yourself from trips
+//
+//
+//
+// }
+
+//questions...a) when the object is created, I make it with a) a starting location, and b) ending location
+//c) use Google maps to figure out the overview_paths, and then have to somehow map over them
+
+
+;
+
+exports.default = Trip;
 
 /***/ })
 /******/ ]);

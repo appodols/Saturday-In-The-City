@@ -10,10 +10,27 @@
 }
 
 
-.clock{
+#clock{
   width: 200px;
   height: 50px;
   background-color: green;
-  margin-right: 5px;
   align-self: center;
+}
+
+
+.clockPanel{
+  display: flex;
+  flex-direction: column;
+  height: 300px;
+  align-self: center;
+  margin-right: 5px;
+}
+
+
+.start-clock{
+  height: 50px;
+  width: 100%;
+  background-color: blue;
+  font-size: 14px;
+
 }

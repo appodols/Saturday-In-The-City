@@ -2,10 +2,13 @@
  import init_map from './init_map';
  import load_data from './load_data';
  import Visuals from './visuals';
+
+
 document.addEventListener("DOMContentLoaded", () => {
   init_map();
   load_data();
-  let visuals = new Visuals();
+  let viz = new Visuals();
+  viz.setup();
 });
 
 
