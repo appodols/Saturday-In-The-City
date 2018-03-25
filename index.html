@@ -11,7 +11,20 @@
     <title></title>
   </head>
   <body>
-      <script src="./build/bundle.js" type="text/javascript" charset="utf-8"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/4.12.0/firebase.js"></script>
+    <script>
+      // Initialize Firebase
+      var config = {
+        apiKey: "AIzaSyD1cgUfN-1AOnivIQVTvsJaUcL7uuhCxis",
+        authDomain: "polsi1280lecture1.firebaseapp.com",
+        databaseURL: "https://polsi1280lecture1.firebaseio.com",
+        projectId: "polsi1280lecture1",
+        storageBucket: "polsi1280lecture1.appspot.com",
+        messagingSenderId: "483036654771"
+      };
+      firebase.initializeApp(config);
+    </script>
       <div class="page">
 
         <div class="clockPanel">
@@ -21,9 +34,8 @@
 
         </div>
         <div id="map"></div>
-
-
       </div>
+      <script src="./build/bundle.js" type="text/javascript" charset="utf-8"></script>
   </body>
 </html>
 

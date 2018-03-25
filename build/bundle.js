@@ -16389,23 +16389,30 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = loadData;
 
+var _data_parser = __webpack_require__(131);
+
+var _data_parser2 = _interopRequireDefault(_data_parser);
+
 var _papaparse = __webpack_require__(126);
 
 var _papaparse2 = _interopRequireDefault(_papaparse);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+/*jshint esversion: 6 */
 function loadData() {
+  var parser = new dataParser();
   $.get({
-    url: '../data/taxi_formatted_1.csv'
+    url: '../data/taxi_shortened.csv'
   }).then(function (file) {
     _papaparse2.default.parse(file, {
       complete: function complete(results) {
         window.data = results.data;
+        // window.parsed = dataParser.format(data);
       }
     });
   });
-} /*jshint esversion: 6 */
+}
 
 /***/ }),
 /* 126 */
@@ -18473,11 +18480,9 @@ var Trip = function () {
           directionsDisplay.setMap(this.map);
           information['steps'] = response.routes[0].legs[0].steps;
           console.log('inside if block');
-          debugger;
         }
       });
       console.log('outside google maps api block');
-      debugger;
     }
   }, {
     key: 'setup',
@@ -18485,7 +18490,6 @@ var Trip = function () {
       this.setupCircle();
       this.setupDirections();
       console.log('inside setup');
-      debugger;
     }
   }, {
     key: 'setupCircle',
@@ -18517,6 +18521,27 @@ var Trip = function () {
 }();
 
 exports.default = Trip;
+
+/***/ }),
+/* 131 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/*jshint esversion: 6 */
+
+var DataParser = function DataParser() {
+  _classCallCheck(this, DataParser);
+};
+
+exports.default = DataParser;
 
 /***/ })
 /******/ ]);

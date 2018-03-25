@@ -41,18 +41,15 @@ class Trip {
           directionsDisplay.setMap(this.map);
           information['steps'] = response.routes[0].legs[0].steps;
           console.log('inside if block');
-          debugger
       }
     });
     console.log('outside google maps api block');
-    debugger
   }
 
   setup(){
     this.setupCircle();
     this.setupDirections();
     console.log('inside setup');
-    debugger
   }
 
   setupCircle(){
