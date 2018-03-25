@@ -6,9 +6,10 @@
 
 document.addEventListener("DOMContentLoaded", () => {
   init_map();
-  load_data();
   let viz = new Visuals();
   viz.setup();
+  load_data();
+  //as long as we wait say 10 seconds we will be good, but ideally want to chain as a promise
 });
 
 

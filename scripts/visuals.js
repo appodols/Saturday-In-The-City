@@ -43,7 +43,6 @@ class Visuals {
     let clock = document.getElementById("clock");
     setInterval( ()=>{
       if(!this.paused){
-        debugger
         this.time.add(1, 's');
         this.incrementTrips();
         this.addTrips();
@@ -53,13 +52,9 @@ class Visuals {
 
   }
 
-
   pauseClock () {
-    debugger
     this.paused = !this.paused;
-    debugger
   }
-
 
 
   nextRideStarted(){
@@ -69,12 +64,6 @@ class Visuals {
     let nextTripMoment = moment(nextStartTime, formatting);
     return nextTripMoment.isBefore(this.time);
   }
-
-
-
-
-
-
 
 
   setup(){

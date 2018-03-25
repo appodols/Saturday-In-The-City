@@ -16272,9 +16272,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 document.addEventListener("DOMContentLoaded", function () {
   (0, _init_map2.default)();
-  (0, _load_data2.default)();
   var viz = new _visuals2.default();
   viz.setup();
+  (0, _load_data2.default)();
+  //as long as we wait say 10 seconds we will be good, but ideally want to chain as a promise
 });
 
 //what will start doing the loading
@@ -16356,7 +16357,6 @@ function calcRoute() {
     if (status == google.maps.DirectionsStatus.OK) {
       directionsDisplay.setDirections(response);
       directionsDisplay.setMap(map);
-      debugger;
     }
   });
 }
@@ -18083,7 +18083,6 @@ var Visuals = function () {
       var clock = document.getElementById("clock");
       setInterval(function () {
         if (!_this.paused) {
-          debugger;
           _this.time.add(1, 's');
           _this.incrementTrips();
           _this.addTrips();
@@ -18094,9 +18093,7 @@ var Visuals = function () {
   }, {
     key: 'pauseClock',
     value: function pauseClock() {
-      debugger;
       this.paused = !this.paused;
-      debugger;
     }
   }, {
     key: 'nextRideStarted',
@@ -18459,6 +18456,7 @@ var Trip = function () {
   }, {
     key: 'setupDirections',
     value: function setupDirections() {
+      var information = {};
       var directionsService = new google.maps.DirectionsService();
       var directionsDisplay = new google.maps.DirectionsRenderer();
       var request = {
@@ -18466,20 +18464,27 @@ var Trip = function () {
         destination: new google.maps.LatLng(this.endLat, this.endLong),
         travelMode: google.maps.TravelMode.DRIVING
       };
+      console.log('inside setupDirections');
       directionsService.route(request, function (response, status) {
+        console.log('inside directionsService block');
         if (status == google.maps.DirectionsStatus.OK) {
+          console.log('setting directions');
           directionsDisplay.setDirections(response);
           directionsDisplay.setMap(this.map);
-          var steps = response.routes[0].legs[0].steps;
+          information['steps'] = response.routes[0].legs[0].steps;
+          console.log('inside if block');
+          debugger;
         }
       });
-      this.steps = steps;
+      console.log('outside google maps api block');
+      debugger;
     }
   }, {
     key: 'setup',
     value: function setup() {
       this.setupCircle();
       this.setupDirections();
+      console.log('inside setup');
       debugger;
     }
   }, {

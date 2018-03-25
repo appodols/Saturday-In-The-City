@@ -24,6 +24,7 @@ class Trip {
   }
 
   setupDirections(){
+    let information = {};
     let directionsService = new google.maps.DirectionsService();
     let directionsDisplay = new google.maps.DirectionsRenderer();
     let request = {
@@ -31,19 +32,26 @@ class Trip {
                     destination: new google.maps.LatLng(this.endLat, this.endLong),
                     travelMode: google.maps.TravelMode.DRIVING
                 };
+    console.log('inside setupDirections');
     directionsService.route(request, function (response, status) {
+      console.log('inside directionsService block');
       if (status == google.maps.DirectionsStatus.OK) {
+          console.log('setting directions');
           directionsDisplay.setDirections(response);
           directionsDisplay.setMap(this.map);
-      var steps = response.routes[0].legs[0].steps;
+          information['steps'] = response.routes[0].legs[0].steps;
+          console.log('inside if block');
+          debugger
       }
     });
-    this.steps = steps;
+    console.log('outside google maps api block');
+    debugger
   }
 
   setup(){
     this.setupCircle();
     this.setupDirections();
+    console.log('inside setup');
     debugger
   }
 

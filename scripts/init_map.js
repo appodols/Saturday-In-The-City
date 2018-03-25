@@ -66,7 +66,6 @@ function calcRoute() {
     if (status == google.maps.DirectionsStatus.OK) {
         directionsDisplay.setDirections(response);
         directionsDisplay.setMap(map);
-        debugger
     }
   });
 }
