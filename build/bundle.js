@@ -1902,7 +1902,7 @@ function loadLocale(name) {
         try {
             oldLocale = globalLocale._abbr;
             var aliasedRequire = require;
-            __webpack_require__(129)("./" + name);
+            __webpack_require__(130)("./" + name);
             getSetGlobalLocale(oldLocale);
         } catch (e) {}
     }
@@ -4574,7 +4574,7 @@ return hooks;
 
 })));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(128)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(129)(module)))
 
 /***/ }),
 /* 1 */
@@ -16264,7 +16264,7 @@ var _load_data = __webpack_require__(125);
 
 var _load_data2 = _interopRequireDefault(_load_data);
 
-var _visuals = __webpack_require__(127);
+var _visuals = __webpack_require__(128);
 
 var _visuals2 = _interopRequireDefault(_visuals);
 
@@ -16273,8 +16273,12 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 document.addEventListener("DOMContentLoaded", function () {
   (0, _init_map2.default)();
   var viz = new _visuals2.default();
-  viz.setup();
-  (0, _load_data2.default)();
+  (0, _load_data2.default)().then(function () {
+    viz.setup();
+  });
+  // viz.setup();
+
+
   //as long as we wait say 10 seconds we will be good, but ideally want to chain as a promise
 });
 
@@ -16340,7 +16344,7 @@ function initMap() {
   // cityCircle.setCenter({lat: 38.933583 , lng: -77.045484 });
   // cityCircle.setMap(map);
   window.map = map;
-  // calcRoute();
+  calcRoute();
 }
 
 function calcRoute() {
@@ -16389,11 +16393,11 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = loadData;
 
-var _data_parser = __webpack_require__(131);
+var _data_parser = __webpack_require__(126);
 
 var _data_parser2 = _interopRequireDefault(_data_parser);
 
-var _papaparse = __webpack_require__(126);
+var _papaparse = __webpack_require__(127);
 
 var _papaparse2 = _interopRequireDefault(_papaparse);
 
@@ -16401,14 +16405,14 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /*jshint esversion: 6 */
 function loadData() {
-  var parser = new dataParser();
-  $.get({
+  return $.get({
     url: '../data/taxi_shortened.csv'
   }).then(function (file) {
     _papaparse2.default.parse(file, {
       complete: function complete(results) {
         window.data = results.data;
-        // window.parsed = dataParser.format(data);
+        var parser = new _data_parser2.default(data);
+        parser.saveData();
       }
     });
   });
@@ -16416,6 +16420,118 @@ function loadData() {
 
 /***/ }),
 /* 126 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/*jshint esversion: 6 */
+var DataParser = function () {
+  function DataParser(rows) {
+    _classCallCheck(this, DataParser);
+
+    this.rows = rows;
+    this.database = firebase.database();
+    this.storage = firebase.storage();
+    window.trips = this.database.ref('trips');
+    this.saveData = this.saveData.bind(this);
+    this.generateDetails = this.generateDetails.bind(this);
+    window.parseSteps = this.parseSteps.bind(this);
+  }
+
+  _createClass(DataParser, [{
+    key: 'saveData',
+    value: function saveData() {
+      var _this = this;
+
+      //careful here because we need this to these calls to be syncrnous and they won't be
+      //you could use //setTimeOut and set up a conservative amount of time..say 2 seconds
+      this.rows.forEach(function (row, i) {
+        setTimeout(function () {
+          _this.generateDetails(row);
+        }, 1000 * i);
+      });
+    }
+  }, {
+    key: 'generateDetails',
+    value: function generateDetails(row) {
+      var trip = {};
+      trip.pickupLong = parseFloat(row[5]);
+      trip.pickupLat = parseFloat(row[6]);
+      trip.endLong = parseFloat(row[7]);
+      trip.endLat = parseFloat(row[8]);
+      var directionsService = new google.maps.DirectionsService();
+      var request = {
+        origin: new google.maps.LatLng(trip.pickupLat, trip.pickupLong),
+        destination: new google.maps.LatLng(trip.endLat, trip.endLong),
+        travelMode: google.maps.TravelMode.DRIVING
+      };
+      console.log('before direction block');
+      directionsService.route(request, function (response, status) {
+        console.log('inside directionsService block');
+        if (status == google.maps.DirectionsStatus.OK) {
+          console.log('insideDirectionsServiceOK');
+          trip.steps = parseSteps(response.routes[0].legs[0].steps);
+          trips.push(trip);
+        }
+      });
+    }
+  }, {
+    key: 'parseLatLngs',
+    value: function parseLatLngs(latlngs) {
+      var latlngsCalled = [];
+      latlngs.forEach(function (location) {
+        latlngsCalled.push([location.lat(), location.lng()]);
+      });
+      return latlngsCalled;
+    }
+  }, {
+    key: 'parseSteps',
+    value: function parseSteps(steps) {
+      var _this2 = this;
+
+      var step_locations = [];
+      steps.forEach(function (step) {
+        step_locations.push(_defineProperty({}, step.duration.value, { latLngs: _this2.parseLatLngs(step.lat_lngs) }));
+      });
+      return step_locations;
+    }
+  }]);
+
+  return DataParser;
+}(); // end of input
+
+
+//each trip needs the following attributes
+//a) pickupLat
+//b) pickupLong
+//c) we will set the circle in the trip
+//d) new directions
+//e) question...how do we ensure that the async nature of making the directions request
+//f) we need the legs of the response
+//g) I need the steps
+//h) I need the overall response because I also need the last step
+//first we need the direction, and then we need to save the infromation
+//we can do this in 2 ways
+//a) we chain a promise together
+//or b) we pass in the infromation in the body of the async function
+//
+
+
+exports.default = DataParser;
+
+/***/ }),
+/* 127 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -18018,7 +18134,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 
 /***/ }),
-/* 127 */
+/* 128 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18035,7 +18151,7 @@ var _moment = __webpack_require__(0);
 
 var _moment2 = _interopRequireDefault(_moment);
 
-var _trip = __webpack_require__(130);
+var _trip = __webpack_require__(131);
 
 var _trip2 = _interopRequireDefault(_trip);
 
@@ -18125,7 +18241,7 @@ var Visuals = function () {
 exports.default = Visuals;
 
 /***/ }),
-/* 128 */
+/* 129 */
 /***/ (function(module, exports) {
 
 module.exports = function(module) {
@@ -18153,7 +18269,7 @@ module.exports = function(module) {
 
 
 /***/ }),
-/* 129 */
+/* 130 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var map = {
@@ -18416,10 +18532,10 @@ webpackContext.keys = function webpackContextKeys() {
 };
 webpackContext.resolve = webpackContextResolve;
 module.exports = webpackContext;
-webpackContext.id = 129;
+webpackContext.id = 130;
 
 /***/ }),
-/* 130 */
+/* 131 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18521,27 +18637,6 @@ var Trip = function () {
 }();
 
 exports.default = Trip;
-
-/***/ }),
-/* 131 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-/*jshint esversion: 6 */
-
-var DataParser = function DataParser() {
-  _classCallCheck(this, DataParser);
-};
-
-exports.default = DataParser;
 
 /***/ })
 /******/ ]);

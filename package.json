@@ -19,8 +19,11 @@
   },
   "homepage": "https://github.com/appodols/Saturday-In-The-City#readme",
   "dependencies": {
+    "async": "^2.6.0",
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.4",
+    "babel-plugin-transform-async-to-generator": "^6.24.1",
+    "babel-polyfill": "^6.26.0",
     "babel-preset-env": "^1.6.1",
     "babel-preset-react": "^6.24.1",
     "moment": "^2.21.0",

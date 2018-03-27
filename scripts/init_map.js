@@ -46,7 +46,7 @@ export default function initMap() {
   // cityCircle.setCenter({lat: 38.933583 , lng: -77.045484 });
   // cityCircle.setMap(map);
   window.map = map;
-  // calcRoute();
+  calcRoute();
 }
 
 
