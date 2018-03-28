@@ -8,8 +8,8 @@ export default function loadData() {
       Papa.parse(file, {
         complete: (results) => {
           window.data = results.data;
-          let parser = new DataParser(data);
-           parser.saveData();
+          // let parser = new DataParser(data);
+          //  parser.saveData();
         }
       });
     });

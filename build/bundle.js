@@ -16344,16 +16344,16 @@ function initMap() {
   // cityCircle.setCenter({lat: 38.933583 , lng: -77.045484 });
   // cityCircle.setMap(map);
   window.map = map;
-  calcRoute();
+  // calcRoute();
 }
 
 function calcRoute() {
   var app_academy = new google.maps.LatLng(40.754475, -73.984438);
-  var washington_dc = new google.maps.LatLng(38.933583, -77.045484);
-  var los_angeles = new google.maps.LatLng(34.0522, -118.2437);
+  // var washington_dc = new google.maps.LatLng(38.933583,  -77.045484);
+  // var los_angeles = new google.maps.LatLng(34.0522,  -118.2437);
   var home = new google.maps.LatLng(40.708426, -74.005820);
   var request = {
-    origin: los_angeles,
+    origin: app_academy,
     destination: home,
     travelMode: google.maps.TravelMode.DRIVING
   };
@@ -16411,8 +16411,8 @@ function loadData() {
     _papaparse2.default.parse(file, {
       complete: function complete(results) {
         window.data = results.data;
-        var parser = new _data_parser2.default(data);
-        parser.saveData();
+        // let parser = new DataParser(data);
+        //  parser.saveData();
       }
     });
   });
@@ -16470,17 +16470,18 @@ var DataParser = function () {
       trip.pickupLat = parseFloat(row[6]);
       trip.endLong = parseFloat(row[7]);
       trip.endLat = parseFloat(row[8]);
+      trip.startTime = row[1];
+      trip.endTime = row[2];
       var directionsService = new google.maps.DirectionsService();
       var request = {
         origin: new google.maps.LatLng(trip.pickupLat, trip.pickupLong),
         destination: new google.maps.LatLng(trip.endLat, trip.endLong),
         travelMode: google.maps.TravelMode.DRIVING
       };
-      console.log('before direction block');
+
+      //I could use apply / call here
       directionsService.route(request, function (response, status) {
-        console.log('inside directionsService block');
         if (status == google.maps.DirectionsStatus.OK) {
-          console.log('insideDirectionsServiceOK');
           trip.steps = parseSteps(response.routes[0].legs[0].steps);
           trips.push(trip);
         }
@@ -18164,52 +18165,64 @@ var Visuals = function () {
     _classCallCheck(this, Visuals);
 
     this.time = (0, _moment2.default)("2016-06-04 05:24:00");
+    window.time = this.time;
     this.interval = 300;
     this.startClock = this.startClock.bind(this);
     this.currentTrips = [];
-    this.dataIndex = 1;
+    this.dataIndex = 0;
+    //note this may need to change with the real data
     this.addTrips = this.addTrips.bind(this);
     this.incrementTrips = this.incrementTrips.bind(this);
     this.nextRideStarted = this.nextRideStarted.bind(this);
     this.pauseClock = this.pauseClock.bind(this);
     this.paused = false;
+    this.database = firebase.database();
+    this.retrieveData = this.retrieveData.bind(this);
+    this.parsedData = [];
+    window.parsedData = this.parsedData;
+    this.retrieveData();
   }
 
   _createClass(Visuals, [{
+    key: 'retrieveData',
+    value: function retrieveData() {
+      var _this = this;
+
+      var ref = this.database.ref('trips');
+      ref.once('value').then(function (snapshot) {
+        snapshot.forEach(function (childSnap) {
+          _this.parsedData.push(childSnap.val());
+        });
+      });
+    }
+  }, {
     key: 'addTrips',
     value: function addTrips() {
       while (this.nextRideStarted()) {
-        var currentTrip = new _trip2.default(data[this.dataIndex], map);
+        var currentTrip = new _trip2.default(this.parsedData[this.dataIndex], map);
         this.dataIndex += 1;
         this.currentTrips.push(currentTrip);
       }
-
-      //gets time
-      //starts with index
-      //while loop
-      //goes through array adding items to this.trips while starting time is less than the current time
-      // I make a new Trip Object and add it to this.trips
-      //we handle the logic for deleting the trip from the trip class
     }
   }, {
     key: 'incrementTrips',
     value: function incrementTrips() {
       this.currentTrips.forEach(function (trip) {
-        trip.increment();
+        trip.increment(trip);
       });
     }
   }, {
     key: 'startClock',
     value: function startClock() {
-      var _this = this;
+      var _this2 = this;
 
       var clock = document.getElementById("clock");
       setInterval(function () {
-        if (!_this.paused) {
-          _this.time.add(1, 's');
-          _this.incrementTrips();
-          _this.addTrips();
-          clock.innerHTML = _this.time.format("HH mm ss");
+        if (!_this2.paused) {
+          _this2.time.add(1, 's');
+          _this2.incrementTrips();
+          _this2.addTrips();
+          clock.innerHTML = _this2.time.format("HH mm ss");
         }
       }, 1000);
     }
@@ -18221,8 +18234,8 @@ var Visuals = function () {
   }, {
     key: 'nextRideStarted',
     value: function nextRideStarted() {
-      var nextTrip = data[this.dataIndex];
-      var nextStartTime = nextTrip[1];
+      var nextTrip = this.parsedData[this.dataIndex];
+      var nextStartTime = nextTrip.startTime;
       var formatting = "MM-DD-YYYY hh:mm:ss a";
       var nextTripMoment = (0, _moment2.default)(nextStartTime, formatting);
       return nextTripMoment.isBefore(this.time);
@@ -18545,67 +18558,51 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /*jshint esversion: 6 */
+
+var _moment = __webpack_require__(0);
+
+var _moment2 = _interopRequireDefault(_moment);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-/*jshint esversion: 6 */
-
 var Trip = function () {
-  function Trip(row, map) {
+  function Trip(trip, map) {
     _classCallCheck(this, Trip);
 
-    this.row = row;
+    this.trip = trip;
     this.map = map;
     this.setup = this.setup.bind(this);
-    this.uptownRide = this.uptownRide.bind(this);
-    this.pickupLong = parseFloat(this.row[5]);
-    this.pickupLat = parseFloat(this.row[6]);
-    this.endLong = parseFloat(this.row[7]);
-    this.endLat = parseFloat(this.row[8]);
-    this.setupCircle = this.setupCircle.bind(this);
-    this.setupDirections = this.setupDirections.bind(this);
     this.setup();
+    window.circleCount = 0;
+    this.setupCircle = this.setupCircle.bind(this);
+    this.uptownRide = this.uptownRide.bind(this);
+    this.startTimeAsMoment = this.startTimeAsMoment.bind(this);
+    this.startTimeAsMoment();
+    this.findStepNumber = this.findStepNumber.bind(this);
+    this.locationNumber = 0;
+    this.stepSeconds = 0;
+    this.move = this.move.bind(this);
+    this.endTrip = this.endTrip.bind(this);
   }
 
-  //we are making a temporary method called setup
-  //that gets the colors and sets the location
-
   _createClass(Trip, [{
-    key: 'uptownRide',
-    value: function uptownRide() {
-      return this.endLat > this.pickupLat;
+    key: 'startTimeAsMoment',
+    value: function startTimeAsMoment() {
+      var formatting = "MM-DD-YYYY hh:mm:ss a";
+      this.tripStartTime = (0, _moment2.default)(this.trip.startTime, formatting);
     }
   }, {
-    key: 'setupDirections',
-    value: function setupDirections() {
-      var information = {};
-      var directionsService = new google.maps.DirectionsService();
-      var directionsDisplay = new google.maps.DirectionsRenderer();
-      var request = {
-        origin: new google.maps.LatLng(this.pickupLat, this.pickupLong),
-        destination: new google.maps.LatLng(this.endLat, this.endLong),
-        travelMode: google.maps.TravelMode.DRIVING
-      };
-      console.log('inside setupDirections');
-      directionsService.route(request, function (response, status) {
-        console.log('inside directionsService block');
-        if (status == google.maps.DirectionsStatus.OK) {
-          console.log('setting directions');
-          directionsDisplay.setDirections(response);
-          directionsDisplay.setMap(this.map);
-          information['steps'] = response.routes[0].legs[0].steps;
-          console.log('inside if block');
-        }
-      });
-      console.log('outside google maps api block');
+    key: 'uptownRide',
+    value: function uptownRide() {
+      return this.trip.endLat > this.trip.pickupLat;
     }
   }, {
     key: 'setup',
     value: function setup() {
       this.setupCircle();
-      this.setupDirections();
-      console.log('inside setup');
     }
   }, {
     key: 'setupCircle',
@@ -18616,14 +18613,69 @@ var Trip = function () {
         strokeWeight: 2,
         fillColor: this.uptownRide() ? '#FF0000' : '#00e1ff',
         fillOpacity: 0.35,
-        center: { lat: this.pickupLat, lng: this.pickupLong },
-        radius: 10
+        center: { lat: this.trip.pickupLat, lng: this.trip.pickupLong },
+        radius: 30
       });
+      console.log('making a circle!');
       Circle.setMap(this.map);
+      this.circle = Circle;
+    }
+  }, {
+    key: 'findStepNumber',
+    value: function findStepNumber(seconds) {}
+  }, {
+    key: 'completedStepsSeconds',
+    value: function completedStepsSeconds() {
+      if (this.stepNumber === 0) return 0;
+      var completedSteps = this.trips.steps.slice(0, this.stepNumber);
+      var durations = [];
+      completedSteps.forEach(function (step) {
+        durations.push(parseInt(Object.keys(step)[0]));
+      });
+      return durations.reduce(function (acc, el) {
+        return acc + el;
+      });
+    }
+  }, {
+    key: 'move',
+    value: function move() {
+      var currentStep = this.trip.steps[this.stepNumber];
+      this.stepSeconds += 1;
+      var duration = Object.keys(currentStep)[0];
+      var latlngs = currentStep[duration].latLngs;
+      var locationsPerSecond = duration / latlngs.length;
+      var nextLocationNumber = Math.round(this.stepSeconds / locationsPerSecond);
+
+      if (this.locationNumber !== nextLocationNumber) {
+        var location = latlngs[nextLocationNumber];
+        this.circle.setCenter({ lat: location[0], lng: location[1] });
+        this.locationNumber += 1;
+      }
+
+      if (this.stepNumber === this.trips.steps[this.trips.steps.length - 1] && nextLocationNumber === latlngs.length - 1) {
+        this.endTrip();
+      }
+    }
+  }, {
+    key: 'endTrip',
+    value: function endTrip() {
+      this.Circle.setMap(null);
     }
   }, {
     key: 'increment',
-    value: function increment() {}
+    value: function increment(trip) {
+      var duration = _moment2.default.duration(time.diff(this.tripStartTime));
+      var seconds = duration.asSeconds();
+      this.move(seconds, trip);
+      //tell me how far into the step I am relatively
+      //move function with step, and duration into step
+
+      //we have access to each of the steps
+      //calculate the time that has ellapsed...
+      //one function that tells me which step I'm in
+      //another that tells me how much time has ellapsed within that step
+      //round down/up to the lngs and lats array and sets Circle accordingly
+    }
 
     //questions...a) when the object is created,
     //I make it with a) a starting location, and b) ending location

@@ -28,17 +28,18 @@ class DataParser{
       trip.pickupLat = parseFloat(row[6]);
       trip.endLong = parseFloat(row[7]);
       trip.endLat = parseFloat(row[8]);
+      trip.startTime = (row[1]);
+      trip.endTime = (row[2]);
       let directionsService = new google.maps.DirectionsService();
       let request = {
                       origin: new google.maps.LatLng(trip.pickupLat, trip.pickupLong),
                       destination: new google.maps.LatLng(trip.endLat, trip.endLong),
                       travelMode: google.maps.TravelMode.DRIVING
                   };
-      console.log('before direction block');
+
+      //I could use apply / call here
     directionsService.route(request, function (response, status) {
-      console.log('inside directionsService block');
       if (status == google.maps.DirectionsStatus.OK) {
-          console.log('insideDirectionsServiceOK');
           trip.steps = parseSteps(response.routes[0].legs[0].steps);
           trips.push(trip);
       }

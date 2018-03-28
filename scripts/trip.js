@@ -1,55 +1,36 @@
 /*jshint esversion: 6 */
 
+import moment from 'moment';
 
 class Trip {
-  constructor(row, map){
-    this.row = row;
+  constructor(trip, map){
+    this.trip = trip;
     this.map = map;
     this.setup = this.setup.bind(this);
-    this.uptownRide = this.uptownRide.bind(this);
-    this.pickupLong = parseFloat(this.row[5]);
-    this.pickupLat = parseFloat(this.row[6]);
-    this.endLong = parseFloat(this.row[7]);
-    this.endLat = parseFloat(this.row[8]);
-    this.setupCircle = this.setupCircle.bind(this);
-    this.setupDirections = this.setupDirections.bind(this);
     this.setup();
+    window.circleCount = 0;
+    this.setupCircle = this.setupCircle.bind(this);
+    this.uptownRide = this.uptownRide.bind(this);
+    this.startTimeAsMoment = this.startTimeAsMoment.bind(this);
+    this.startTimeAsMoment();
+    this.findStepNumber = this.findStepNumber.bind(this);
+    this.locationNumber = 0;
+    this.stepSeconds = 0;
+    this.move = this.move.bind(this);
+    this.endTrip = this.endTrip.bind(this);
   }
 
-  //we are making a temporary method called setup
-  //that gets the colors and sets the location
+  startTimeAsMoment(){
+    let formatting = "MM-DD-YYYY hh:mm:ss a";
+    this.tripStartTime = moment(this.trip.startTime, formatting);
+  }
 
   uptownRide(){
-    return (this.endLat > this.pickupLat);
-  }
-
-  setupDirections(){
-    let information = {};
-    let directionsService = new google.maps.DirectionsService();
-    let directionsDisplay = new google.maps.DirectionsRenderer();
-    let request = {
-                    origin: new google.maps.LatLng(this.pickupLat, this.pickupLong),
-                    destination: new google.maps.LatLng(this.endLat, this.endLong),
-                    travelMode: google.maps.TravelMode.DRIVING
-                };
-    console.log('inside setupDirections');
-    directionsService.route(request, function (response, status) {
-      console.log('inside directionsService block');
-      if (status == google.maps.DirectionsStatus.OK) {
-          console.log('setting directions');
-          directionsDisplay.setDirections(response);
-          directionsDisplay.setMap(this.map);
-          information['steps'] = response.routes[0].legs[0].steps;
-          console.log('inside if block');
-      }
-    });
-    console.log('outside google maps api block');
+    return (this.trip.endLat > this.trip.pickupLat);
   }
 
   setup(){
     this.setupCircle();
-    this.setupDirections();
-    console.log('inside setup');
   }
 
   setupCircle(){
@@ -59,19 +40,74 @@ class Trip {
            strokeWeight: 2,
            fillColor: (this.uptownRide() ? '#FF0000' : '#00e1ff' ),
            fillOpacity: 0.35,
-           center: {lat: this.pickupLat, lng: this.pickupLong},
-           radius: 10
+           center: {lat: this.trip.pickupLat, lng: this.trip.pickupLong},
+           radius: 30
           });
+      console.log('making a circle!');
     Circle.setMap(this.map);
+    this.circle = Circle;
+  }
+
+
+  findStepNumber(seconds){
+
+
+  }
+
+  completedStepsSeconds(){
+    if(this.stepNumber === 0) return 0;
+    let completedSteps = this.trips.steps.slice(0,this.stepNumber);
+    let durations = [];
+    completedSteps.forEach((step)=>{durations.push(parseInt (Object.keys(step)[0]));});
+    return durations.reduce((acc,el)=>(acc+el));
+  }
+
+  move(){
+    let currentStep = this.trip.steps[this.stepNumber];
+    this.stepSeconds += 1;
+    let duration = Object.keys(currentStep)[0];
+    let latlngs = currentStep[duration].latLngs;
+    let locationsPerSecond =  (duration / latlngs.length);
+    let nextLocationNumber = Math.round( this.stepSeconds / locationsPerSecond);
+
+      if(this.locationNumber!== nextLocationNumber){
+        let location = latlngs[nextLocationNumber];
+        this.circle.setCenter({lat: location[0], lng: location[1]});
+        this.locationNumber += 1;
+      }
+
+      if(this.stepNumber === this.trips.steps[this.trips.steps.length-1]
+        && nextLocationNumber === latlngs.length-1){
+          this.endTrip();
+        }
+
+
+  }
+
+
+
+  endTrip(){
+    this.Circle.setMap(null);
   }
 
 
 
 
-  increment(){
 
 
 
+  increment(trip){
+    let duration = moment.duration(time.diff(this.tripStartTime));
+    let seconds =  duration.asSeconds();
+    this.move(seconds, trip);
+    //tell me how far into the step I am relatively
+    //move function with step, and duration into step
+
+    //we have access to each of the steps
+    //calculate the time that has ellapsed...
+    //one function that tells me which step I'm in
+    //another that tells me how much time has ellapsed within that step
+    //round down/up to the lngs and lats array and sets Circle accordingly
 
   }
 

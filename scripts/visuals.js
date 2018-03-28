@@ -5,37 +5,46 @@ import Trip from './trip';
 class Visuals {
   constructor(){
     this.time = moment("2016-06-04 05:24:00");
+    window.time = this.time;
     this.interval = 300;
     this.startClock = this.startClock.bind(this);
     this.currentTrips = [];
-    this.dataIndex = 1;
+    this.dataIndex = 0;
+    //note this may need to change with the real data
     this.addTrips = this.addTrips.bind(this);
     this.incrementTrips = this.incrementTrips.bind(this);
     this.nextRideStarted = this.nextRideStarted.bind(this);
     this.pauseClock = this.pauseClock.bind(this);
     this.paused = false;
+    this.database = firebase.database();
+    this.retrieveData = this.retrieveData.bind(this);
+    this.parsedData = [];
+    window.parsedData = this.parsedData;
+    this.retrieveData();
   }
 
+  retrieveData(){
+    let ref = this.database.ref('trips');
+    ref.once('value').then(snapshot => {
+        snapshot.forEach(childSnap => {
+          this.parsedData.push(childSnap.val());
+        });
+    });
+}
 
   addTrips(){
     while(this.nextRideStarted()){
-      let currentTrip = new Trip(data[this.dataIndex], map);
+      let currentTrip = new Trip(this.parsedData[this.dataIndex], map);
       this.dataIndex += 1;
       this.currentTrips.push(currentTrip);
     }
 
-    //gets time
-    //starts with index
-    //while loop
-    //goes through array adding items to this.trips while starting time is less than the current time
-    // I make a new Trip Object and add it to this.trips
-    //we handle the logic for deleting the trip from the trip class
   }
 
 
   incrementTrips(){
     this.currentTrips.forEach(trip=>{
-      trip.increment();
+      trip.increment(trip);
     });
   }
 
@@ -58,8 +67,8 @@ class Visuals {
 
 
   nextRideStarted(){
-    let nextTrip = data[this.dataIndex];
-    let nextStartTime = nextTrip[1];
+    let nextTrip = this.parsedData[this.dataIndex];
+    let nextStartTime = nextTrip.startTime;
     let formatting = "MM-DD-YYYY hh:mm:ss a";
     let nextTripMoment = moment(nextStartTime, formatting);
     return nextTripMoment.isBefore(this.time);

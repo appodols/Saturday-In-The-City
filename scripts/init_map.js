@@ -46,7 +46,7 @@ export default function initMap() {
   // cityCircle.setCenter({lat: 38.933583 , lng: -77.045484 });
   // cityCircle.setMap(map);
   window.map = map;
-  calcRoute();
+  // calcRoute();
 }
 
 
@@ -54,11 +54,11 @@ export default function initMap() {
 
 function calcRoute() {
   var app_academy = new google.maps.LatLng(40.754475, -73.984438);
-  var washington_dc = new google.maps.LatLng(38.933583,  -77.045484);
-  var los_angeles = new google.maps.LatLng(34.0522,  -118.2437);
+  // var washington_dc = new google.maps.LatLng(38.933583,  -77.045484);
+  // var los_angeles = new google.maps.LatLng(34.0522,  -118.2437);
   var home = new google.maps.LatLng(40.708426, -74.005820);
   var request = {
-                  origin: los_angeles,
+                  origin: app_academy,
                   destination: home,
                   travelMode: google.maps.TravelMode.DRIVING
               };
