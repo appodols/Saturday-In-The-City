@@ -16319,7 +16319,7 @@ function initMap() {
   directionsDisplay = new google.maps.DirectionsRenderer();
   map = new google.maps.Map(document.getElementById('map'), {
     center: { lat: 40.741991, lng: -73.957486 },
-    zoom: 12,
+    zoom: 13,
     heading: 90,
     styles: [{
       "elementType": "geometry",
@@ -18304,6 +18304,7 @@ var Visuals = function () {
     this.paused = false;
     this.database = firebase.database();
     this.retrieveData = this.retrieveData.bind(this);
+    // this.resumeClock = this.resumeClock.bind(this);
     this.parsedData = [];
     this.retrieveData();
   }
@@ -18357,7 +18358,13 @@ var Visuals = function () {
   }, {
     key: 'pauseClock',
     value: function pauseClock() {
+      var pauseButton = document.getElementsByClassName("pause-clock")[0];
       this.paused = !this.paused;
+      if (this.paused) {
+        pauseButton.innerHTML = 'Resume';
+      } else {
+        pauseButton.innerHTML = 'Pause';
+      }
     }
   }, {
     key: 'nextRideStarted',
@@ -18386,6 +18393,7 @@ var Visuals = function () {
       $(".start-clock").on('click', this.startClock);
       $(".pause-clock").on('click', this.pauseClock);
       $(".restart-clock").on('click', this.restartClock);
+      $(".resume-clock").on('click', this.resumeClock);
     }
   }]);
 

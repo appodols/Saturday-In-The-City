@@ -19,6 +19,7 @@ class Visuals {
     this.paused = false;
     this.database = firebase.database();
     this.retrieveData = this.retrieveData.bind(this);
+    // this.resumeClock = this.resumeClock.bind(this);
     this.parsedData = [];
     this.retrieveData();
 
@@ -69,7 +70,13 @@ class Visuals {
   }
 
   pauseClock () {
+    let pauseButton = document.getElementsByClassName("pause-clock")[0];
     this.paused = !this.paused;
+    if(this.paused){
+      pauseButton.innerHTML = 'Resume';
+    } else {
+      pauseButton.innerHTML = 'Pause';
+    }
   }
 
 
@@ -94,10 +101,14 @@ class Visuals {
 
 
 
+
+
+
   setup(){
     $(".start-clock").on('click', this.startClock);
     $(".pause-clock").on('click', this.pauseClock);
     $(".restart-clock").on('click', this.restartClock);
+    $(".resume-clock").on('click', this.resumeClock);
   }
 
 
