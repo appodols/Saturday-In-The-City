@@ -19,8 +19,8 @@ class Visuals {
     this.database = firebase.database();
     this.retrieveData = this.retrieveData.bind(this);
     this.parsedData = [];
-    window.parsedData = this.parsedData;
     this.retrieveData();
+
   }
 
   retrieveData(){
@@ -29,11 +29,17 @@ class Visuals {
         snapshot.forEach(childSnap => {
           this.parsedData.push(childSnap.val());
         });
-    });
+        this.parsedData = this.parsedData.slice(0,20);
+        window.parsedData = this.parsedData;
+      });
+    //reduce size of dataset
 }
 
+
+
+
   addTrips(){
-    while(this.nextRideStarted()){
+    while(this.nextRideStarted() && this.dataIndex <= this.parsedData.length-1){
       let currentTrip = new Trip(this.parsedData[this.dataIndex], map);
       this.dataIndex += 1;
       this.currentTrips.push(currentTrip);
@@ -44,7 +50,7 @@ class Visuals {
 
   incrementTrips(){
     this.currentTrips.forEach(trip=>{
-      trip.increment(trip);
+      trip.increment();
     });
   }
 
@@ -57,7 +63,7 @@ class Visuals {
         this.addTrips();
         clock.innerHTML = this.time.format("HH mm ss");
       }
-    }, 1000);
+    }, 50);
 
   }
 
@@ -67,6 +73,7 @@ class Visuals {
 
 
   nextRideStarted(){
+    if(this.dataIndex > this.parsedData.length-1) return false;
     let nextTrip = this.parsedData[this.dataIndex];
     let nextStartTime = nextTrip.startTime;
     let formatting = "MM-DD-YYYY hh:mm:ss a";

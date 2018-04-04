@@ -13,11 +13,12 @@ class Trip {
     this.uptownRide = this.uptownRide.bind(this);
     this.startTimeAsMoment = this.startTimeAsMoment.bind(this);
     this.startTimeAsMoment();
-    this.findStepNumber = this.findStepNumber.bind(this);
-    this.locationNumber = 0;
+    this.stepNumber = 0;
+    this.locationNumber = -1;
     this.stepSeconds = 0;
     this.move = this.move.bind(this);
     this.endTrip = this.endTrip.bind(this);
+    this.increment = this.increment.bind(this);
   }
 
   startTimeAsMoment(){
@@ -41,80 +42,59 @@ class Trip {
            fillColor: (this.uptownRide() ? '#FF0000' : '#00e1ff' ),
            fillOpacity: 0.35,
            center: {lat: this.trip.pickupLat, lng: this.trip.pickupLong},
-           radius: 30
+           radius: 80
           });
       console.log('making a circle!');
     Circle.setMap(this.map);
     this.circle = Circle;
   }
 
-
-  findStepNumber(seconds){
-
-
-  }
-
-  completedStepsSeconds(){
-    if(this.stepNumber === 0) return 0;
-    let completedSteps = this.trips.steps.slice(0,this.stepNumber);
-    let durations = [];
-    completedSteps.forEach((step)=>{durations.push(parseInt (Object.keys(step)[0]));});
-    return durations.reduce((acc,el)=>(acc+el));
-  }
-
   move(){
-    let currentStep = this.trip.steps[this.stepNumber];
-    this.stepSeconds += 1;
-    let duration = Object.keys(currentStep)[0];
-    let latlngs = currentStep[duration].latLngs;
-    let locationsPerSecond =  (duration / latlngs.length);
-    let nextLocationNumber = Math.round( this.stepSeconds / locationsPerSecond);
+    if(this.stepNumber !== null){
+      let currentStep = this.trip.steps[this.stepNumber];
+        // console.log('move');
+        // debugger
+      let duration = parseInt(Object.keys(currentStep)[0]);
+      let latlngs = currentStep[duration].latLngs;
+      let locationsPerSecond =  (duration / latlngs.length);
+      let nextLocationNumber = Math.round( this.stepSeconds / locationsPerSecond);
 
-      if(this.locationNumber!== nextLocationNumber){
-        let location = latlngs[nextLocationNumber];
-        this.circle.setCenter({lat: location[0], lng: location[1]});
-        this.locationNumber += 1;
-      }
+      if(this.locationNumber!== nextLocationNumber && nextLocationNumber < latlngs.length){
+         let location = latlngs[nextLocationNumber];
+         // console.log('inside if');
+         this.circle.setCenter({lat: location[0], lng: location[1]});
+         this.locationNumber += 1;
+       }
 
-      if(this.stepNumber === this.trips.steps[this.trips.steps.length-1]
-        && nextLocationNumber === latlngs.length-1){
-          this.endTrip();
+      if(this.stepSeconds === duration || (duration === 0) ){
+          // console.log('inside end statement');
+          // // debugger
+        if(this.stepNumber === this.trip.steps.length-1 || (duration === 0)) {
+            this.endTrip();
+        } else {
+        this.stepNumber += 1;
+        this.stepSeconds = 0;
+        this.locationNumber = -1;
         }
-
-
+      }
+    }
   }
+
 
 
 
   endTrip(){
-    this.Circle.setMap(null);
+    this.circle.setMap(null);
+    this.stepNumber = null;
   }
 
 
 
-
-
-
-
-  increment(trip){
-    let duration = moment.duration(time.diff(this.tripStartTime));
-    let seconds =  duration.asSeconds();
-    this.move(seconds, trip);
-    //tell me how far into the step I am relatively
-    //move function with step, and duration into step
-
-    //we have access to each of the steps
-    //calculate the time that has ellapsed...
-    //one function that tells me which step I'm in
-    //another that tells me how much time has ellapsed within that step
-    //round down/up to the lngs and lats array and sets Circle accordingly
-
+  increment(){
+    this.stepSeconds += 1;
+    this.move(this.trip);
   }
 
-//questions...a) when the object is created,
-//I make it with a) a starting location, and b) ending location
-//c) use Google maps to
-//figure out the overview_paths, and then have to somehow map over them
 
 
 

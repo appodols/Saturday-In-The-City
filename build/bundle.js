@@ -16307,6 +16307,8 @@ exports.default = initMap;
 // }
 
 
+// import {styles} from 'style_map';
+
 var poly;
 var map;
 var directionsService;
@@ -16318,7 +16320,129 @@ function initMap() {
   map = new google.maps.Map(document.getElementById('map'), {
     center: { lat: 40.772596, lng: -73.972603 },
     zoom: 12,
-    heading: 90
+    heading: 90,
+    styles: [{
+      "elementType": "geometry",
+      "stylers": [{
+        "color": "#212121"
+      }]
+    }, {
+      "elementType": "labels.icon",
+      "stylers": [{
+        "visibility": "off"
+      }]
+    }, {
+      "elementType": "labels.text.fill",
+      "stylers": [{
+        "color": "#757575"
+      }]
+    }, {
+      "elementType": "labels.text.stroke",
+      "stylers": [{
+        "color": "#212121"
+      }]
+    }, {
+      "featureType": "administrative",
+      "elementType": "geometry",
+      "stylers": [{
+        "color": "#757575"
+      }]
+    }, {
+      "featureType": "administrative.country",
+      "elementType": "labels.text.fill",
+      "stylers": [{
+        "color": "#9e9e9e"
+      }]
+    }, {
+      "featureType": "administrative.land_parcel",
+      "stylers": [{
+        "visibility": "off"
+      }]
+    }, {
+      "featureType": "administrative.locality",
+      "elementType": "labels.text.fill",
+      "stylers": [{
+        "color": "#bdbdbd"
+      }]
+    }, {
+      "featureType": "poi",
+      "elementType": "labels.text.fill",
+      "stylers": [{
+        "color": "#757575"
+      }]
+    }, {
+      "featureType": "poi.park",
+      "elementType": "geometry",
+      "stylers": [{
+        "color": "#181818"
+      }]
+    }, {
+      "featureType": "poi.park",
+      "elementType": "labels.text.fill",
+      "stylers": [{
+        "color": "#616161"
+      }]
+    }, {
+      "featureType": "poi.park",
+      "elementType": "labels.text.stroke",
+      "stylers": [{
+        "color": "#1b1b1b"
+      }]
+    }, {
+      "featureType": "road",
+      "elementType": "geometry.fill",
+      "stylers": [{
+        "color": "#2c2c2c"
+      }]
+    }, {
+      "featureType": "road",
+      "elementType": "labels.text.fill",
+      "stylers": [{
+        "color": "#8a8a8a"
+      }]
+    }, {
+      "featureType": "road.arterial",
+      "elementType": "geometry",
+      "stylers": [{
+        "color": "#373737"
+      }]
+    }, {
+      "featureType": "road.highway",
+      "elementType": "geometry",
+      "stylers": [{
+        "color": "#3c3c3c"
+      }]
+    }, {
+      "featureType": "road.highway.controlled_access",
+      "elementType": "geometry",
+      "stylers": [{
+        "color": "#4e4e4e"
+      }]
+    }, {
+      "featureType": "road.local",
+      "elementType": "labels.text.fill",
+      "stylers": [{
+        "color": "#616161"
+      }]
+    }, {
+      "featureType": "transit",
+      "elementType": "labels.text.fill",
+      "stylers": [{
+        "color": "#757575"
+      }]
+    }, {
+      "featureType": "water",
+      "elementType": "geometry",
+      "stylers": [{
+        "color": "#000000"
+      }]
+    }, {
+      "featureType": "water",
+      "elementType": "labels.text.fill",
+      "stylers": [{
+        "color": "#3d3d3d"
+      }]
+    }]
   });
   directionsDisplay.setMap(map);
   poly = new google.maps.Polyline({
@@ -16361,6 +16485,7 @@ function calcRoute() {
     if (status == google.maps.DirectionsStatus.OK) {
       directionsDisplay.setDirections(response);
       directionsDisplay.setMap(map);
+      debugger;
     }
   });
 }
@@ -18179,7 +18304,6 @@ var Visuals = function () {
     this.database = firebase.database();
     this.retrieveData = this.retrieveData.bind(this);
     this.parsedData = [];
-    window.parsedData = this.parsedData;
     this.retrieveData();
   }
 
@@ -18193,12 +18317,15 @@ var Visuals = function () {
         snapshot.forEach(function (childSnap) {
           _this.parsedData.push(childSnap.val());
         });
+        _this.parsedData = _this.parsedData.slice(0, 20);
+        window.parsedData = _this.parsedData;
       });
+      //reduce size of dataset
     }
   }, {
     key: 'addTrips',
     value: function addTrips() {
-      while (this.nextRideStarted()) {
+      while (this.nextRideStarted() && this.dataIndex <= this.parsedData.length - 1) {
         var currentTrip = new _trip2.default(this.parsedData[this.dataIndex], map);
         this.dataIndex += 1;
         this.currentTrips.push(currentTrip);
@@ -18208,7 +18335,7 @@ var Visuals = function () {
     key: 'incrementTrips',
     value: function incrementTrips() {
       this.currentTrips.forEach(function (trip) {
-        trip.increment(trip);
+        trip.increment();
       });
     }
   }, {
@@ -18224,7 +18351,7 @@ var Visuals = function () {
           _this2.addTrips();
           clock.innerHTML = _this2.time.format("HH mm ss");
         }
-      }, 1000);
+      }, 50);
     }
   }, {
     key: 'pauseClock',
@@ -18234,6 +18361,7 @@ var Visuals = function () {
   }, {
     key: 'nextRideStarted',
     value: function nextRideStarted() {
+      if (this.dataIndex > this.parsedData.length - 1) return false;
       var nextTrip = this.parsedData[this.dataIndex];
       var nextStartTime = nextTrip.startTime;
       var formatting = "MM-DD-YYYY hh:mm:ss a";
@@ -18581,11 +18709,12 @@ var Trip = function () {
     this.uptownRide = this.uptownRide.bind(this);
     this.startTimeAsMoment = this.startTimeAsMoment.bind(this);
     this.startTimeAsMoment();
-    this.findStepNumber = this.findStepNumber.bind(this);
-    this.locationNumber = 0;
+    this.stepNumber = 0;
+    this.locationNumber = -1;
     this.stepSeconds = 0;
     this.move = this.move.bind(this);
     this.endTrip = this.endTrip.bind(this);
+    this.increment = this.increment.bind(this);
   }
 
   _createClass(Trip, [{
@@ -18614,75 +18743,56 @@ var Trip = function () {
         fillColor: this.uptownRide() ? '#FF0000' : '#00e1ff',
         fillOpacity: 0.35,
         center: { lat: this.trip.pickupLat, lng: this.trip.pickupLong },
-        radius: 30
+        radius: 80
       });
       console.log('making a circle!');
       Circle.setMap(this.map);
       this.circle = Circle;
     }
   }, {
-    key: 'findStepNumber',
-    value: function findStepNumber(seconds) {}
-  }, {
-    key: 'completedStepsSeconds',
-    value: function completedStepsSeconds() {
-      if (this.stepNumber === 0) return 0;
-      var completedSteps = this.trips.steps.slice(0, this.stepNumber);
-      var durations = [];
-      completedSteps.forEach(function (step) {
-        durations.push(parseInt(Object.keys(step)[0]));
-      });
-      return durations.reduce(function (acc, el) {
-        return acc + el;
-      });
-    }
-  }, {
     key: 'move',
     value: function move() {
-      var currentStep = this.trip.steps[this.stepNumber];
-      this.stepSeconds += 1;
-      var duration = Object.keys(currentStep)[0];
-      var latlngs = currentStep[duration].latLngs;
-      var locationsPerSecond = duration / latlngs.length;
-      var nextLocationNumber = Math.round(this.stepSeconds / locationsPerSecond);
+      if (this.stepNumber !== null) {
+        var currentStep = this.trip.steps[this.stepNumber];
+        // console.log('move');
+        // debugger
+        var duration = parseInt(Object.keys(currentStep)[0]);
+        var latlngs = currentStep[duration].latLngs;
+        var locationsPerSecond = duration / latlngs.length;
+        var nextLocationNumber = Math.round(this.stepSeconds / locationsPerSecond);
 
-      if (this.locationNumber !== nextLocationNumber) {
-        var location = latlngs[nextLocationNumber];
-        this.circle.setCenter({ lat: location[0], lng: location[1] });
-        this.locationNumber += 1;
-      }
+        if (this.locationNumber !== nextLocationNumber && nextLocationNumber < latlngs.length) {
+          var location = latlngs[nextLocationNumber];
+          // console.log('inside if');
+          this.circle.setCenter({ lat: location[0], lng: location[1] });
+          this.locationNumber += 1;
+        }
 
-      if (this.stepNumber === this.trips.steps[this.trips.steps.length - 1] && nextLocationNumber === latlngs.length - 1) {
-        this.endTrip();
+        if (this.stepSeconds === duration || duration === 0) {
+          // console.log('inside end statement');
+          // // debugger
+          if (this.stepNumber === this.trip.steps.length - 1 || duration === 0) {
+            this.endTrip();
+          } else {
+            this.stepNumber += 1;
+            this.stepSeconds = 0;
+            this.locationNumber = -1;
+          }
+        }
       }
     }
   }, {
     key: 'endTrip',
     value: function endTrip() {
-      this.Circle.setMap(null);
+      this.circle.setMap(null);
+      this.stepNumber = null;
     }
   }, {
     key: 'increment',
-    value: function increment(trip) {
-      var duration = _moment2.default.duration(time.diff(this.tripStartTime));
-      var seconds = duration.asSeconds();
-      this.move(seconds, trip);
-      //tell me how far into the step I am relatively
-      //move function with step, and duration into step
-
-      //we have access to each of the steps
-      //calculate the time that has ellapsed...
-      //one function that tells me which step I'm in
-      //another that tells me how much time has ellapsed within that step
-      //round down/up to the lngs and lats array and sets Circle accordingly
+    value: function increment() {
+      this.stepSeconds += 1;
+      this.move(this.trip);
     }
-
-    //questions...a) when the object is created,
-    //I make it with a) a starting location, and b) ending location
-    //c) use Google maps to
-    //figure out the overview_paths, and then have to somehow map over them
-
-
   }]);
 
   return Trip;
