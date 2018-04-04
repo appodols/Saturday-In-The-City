@@ -18300,6 +18300,7 @@ var Visuals = function () {
     this.incrementTrips = this.incrementTrips.bind(this);
     this.nextRideStarted = this.nextRideStarted.bind(this);
     this.pauseClock = this.pauseClock.bind(this);
+    this.restartClock = this.restartClock.bind(this);
     this.paused = false;
     this.database = firebase.database();
     this.retrieveData = this.retrieveData.bind(this);
@@ -18369,10 +18370,22 @@ var Visuals = function () {
       return nextTripMoment.isBefore(this.time);
     }
   }, {
+    key: 'restartClock',
+    value: function restartClock() {
+      this.time = (0, _moment2.default)("2016-06-04 05:24:00");
+      this.currentTrips.forEach(function (trip) {
+        trip.endTrip();
+      });
+      this.currentTrips = [];
+      this.dataIndex = 0;
+      this.paused = false;
+    }
+  }, {
     key: 'setup',
     value: function setup() {
       $(".start-clock").on('click', this.startClock);
       $(".pause-clock").on('click', this.pauseClock);
+      $(".restart-clock").on('click', this.restartClock);
     }
   }]);
 

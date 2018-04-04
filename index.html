@@ -5,6 +5,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDhPwxhaPFoYIyo3vytPODsDaN6TSM4Lbw">
     <link href="https://fonts.googleapis.com/css?family=Pacifico" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
  </script>
     <meta charset="utf-8">
     <!-- <h1> Let's Make Something Awesome</h1> -->
@@ -36,11 +37,17 @@
 
           <div class="page">
             <div class="clockPanel">
-              <div id="clock"></div>
+              <div class="clockContent">
+                  <!-- <span class='clock-label'>Current Time</span> -->
+                  <div id="clock"></div>
+              </div>
+
 
               <div class="clockButtons">
-                <button class ='start-clock' type="button" name="button">Start Clock</button>
-                <button class ='pause-clock' type="button" name="button">pause/resume clock</button>
+                <button class ='start-clock' type="button" name="button">Start</button>
+                <button class ='restart-clock' type="button" name="button">Restart</button>
+                <button class ='pause-clock' type="button" name="button">Pause</button>
+                <button class ='resume-clock' type="button" name="button">Resume</button>
               </div>
 
 
