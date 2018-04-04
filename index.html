@@ -4,6 +4,7 @@
     <!-- <script src="http://maps.googleapis.com/maps/api/js?sensor=false"></script> -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDhPwxhaPFoYIyo3vytPODsDaN6TSM4Lbw">
+    <link href="https://fonts.googleapis.com/css?family=Pacifico" rel="stylesheet">
  </script>
     <meta charset="utf-8">
     <!-- <h1> Let's Make Something Awesome</h1> -->
@@ -25,17 +26,29 @@
       };
       firebase.initializeApp(config);
     </script>
-      <div class="page">
 
-        <div class="clockPanel">
-          <div id="clock"></div>
-            <button class ='start-clock' type="button" name="button">Start Clock</button>
-            <button class ='pause-clock' type="button" name="button">pause/resume clock</button>
+    <div class="page_1">
 
-        </div class= 'mapContainer'>
-        <div id="map"></div>
+          <div class="header"> Saturday In The City</div>
+
+
+
+
+          <div class="page">
+            <div class="clockPanel">
+              <div id="clock"></div>
+
+              <div class="clockButtons">
+                <button class ='start-clock' type="button" name="button">Start Clock</button>
+                <button class ='pause-clock' type="button" name="button">pause/resume clock</button>
+              </div>
+
+
+            </div class= 'mapContainer'>
+            <div id="map"></div>
+          </div>
+
       </div>
-
 
       <script src="./build/bundle.js" type="text/javascript" charset="utf-8"></script>
   </body>

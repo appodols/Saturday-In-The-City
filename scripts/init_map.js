@@ -20,7 +20,7 @@ export default function initMap() {
   directionsService = new google.maps.DirectionsService();
   directionsDisplay = new google.maps.DirectionsRenderer();
   map = new google.maps.Map(document.getElementById('map'), {
-     center: { lat: 40.772596, lng: -73.972603 },
+     center: { lat:  40.741991, lng: -73.957486 },
      zoom: 12,
      heading: 90,
      styles: [

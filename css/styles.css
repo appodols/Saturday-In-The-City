@@ -1,13 +1,42 @@
 #map{
   height: 700px;
-  width: 1000px;
+  width: 700px;
   background-color: green;
-  justify-content: flex-end;
 }
 
 
-.page {
+
+.clockButons{
   display: flex;
+  width: 100%;
+  flex-direction: row;
+}
+
+
+
+
+
+
+
+
+.header{
+  height: 150px;
+  /*background: green;*/
+  font-family: 'Pacifico', cursive;
+  color: black;
+  font-weight: bold;
+  font-size: 70px;
+  text-align: center;
+}
+
+
+
+
+.page{
+  height: 700px;
+  display: flex;
+  justify-content: flex-end;
+  justify-content: space-between;
 }
 
 
@@ -16,6 +45,7 @@
   height: 50px;
   background-color: green;
   align-self: center;
+  text-align: center;
 }
 
 
@@ -30,7 +60,7 @@
 
 .start-clock{
   height: 50px;
-  width: 100%;
+  /*width: 100%;*/
   background-color: blue;
   font-size: 14px;
 
@@ -38,7 +68,7 @@
 
 .pause-clock{
   height: 50px;
-  width: 100%;
+  /*width: 100%;*/
   background-color: red;
   font-size: 14px;
 }
