@@ -18393,7 +18393,6 @@ var Visuals = function () {
   }, {
     key: 'restartClock',
     value: function restartClock() {
-      this.time = (0, _moment2.default)("2016-06-04 05:24:00");
       this.currentTrips.forEach(function (trip) {
         trip.endTrip();
       });
@@ -18401,6 +18400,11 @@ var Visuals = function () {
       this.dataIndex = 0;
       window.quantityTaxis = 0;
       this.paused = false;
+      var pauseButton = document.getElementsByClassName("pause-clock")[0];
+      pauseButton.innerHTML = 'Pause';
+      this.time = (0, _moment2.default)("2016-06-04 05:24:00");
+      var clock = document.getElementById("clock");
+      clock.innerHTML = this.time.format("HH mm ss");
     }
   }, {
     key: 'setup',
@@ -18752,6 +18756,7 @@ var Trip = function () {
     this.endTrip = this.endTrip.bind(this);
     this.increment = this.increment.bind(this);
     this.setTaxiHTML = this.setTaxiHTML.bind(this);
+    this.ended = false;
   }
 
   _createClass(Trip, [{
@@ -18821,10 +18826,13 @@ var Trip = function () {
   }, {
     key: 'endTrip',
     value: function endTrip() {
-      this.circle.setMap(null);
-      this.stepNumber = null;
-      window.quantityTaxis -= 1;
-      this.setTaxiHTML();
+      if (this.ended === false) {
+        this.ended = true;
+        this.circle.setMap(null);
+        this.stepNumber = null;
+        window.quantityTaxis -= 1;
+        this.setTaxiHTML();
+      }
     }
   }, {
     key: 'setTaxiHTML',

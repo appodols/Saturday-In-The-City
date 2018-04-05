@@ -104,14 +104,18 @@ class Visuals {
   }
 
   restartClock(){
-    this.time = moment("2016-06-04 05:24:00");
     this.currentTrips.forEach(trip=>{
-      trip.endTrip();
-    });
+     trip.endTrip();
+   });
     this.currentTrips = [];
     this.dataIndex = 0;
     window.quantityTaxis = 0;
     this.paused = false;
+    let pauseButton = document.getElementsByClassName("pause-clock")[0];
+    pauseButton.innerHTML = 'Pause';
+    this.time = moment("2016-06-04 05:24:00");
+    let clock = document.getElementById("clock");
+    clock.innerHTML = this.time.format("HH mm ss");
   }
 
 

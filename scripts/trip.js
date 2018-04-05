@@ -20,6 +20,7 @@ class Trip {
     this.endTrip = this.endTrip.bind(this);
     this.increment = this.increment.bind(this);
     this.setTaxiHTML = this.setTaxiHTML.bind(this);
+    this.ended = false;
   }
 
   startTimeAsMoment(){
@@ -85,10 +86,13 @@ class Trip {
 
 
   endTrip(){
-    this.circle.setMap(null);
-    this.stepNumber = null;
-    window.quantityTaxis -= 1;
-    this.setTaxiHTML();
+  if(this.ended === false){
+      this.ended = true;
+      this.circle.setMap(null);
+      this.stepNumber = null;
+      window.quantityTaxis -= 1;
+      this.setTaxiHTML();
+    }
   }
 
 
