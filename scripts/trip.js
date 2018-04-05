@@ -19,6 +19,7 @@ class Trip {
     this.move = this.move.bind(this);
     this.endTrip = this.endTrip.bind(this);
     this.increment = this.increment.bind(this);
+    this.setTaxiHTML = this.setTaxiHTML.bind(this);
   }
 
   startTimeAsMoment(){
@@ -86,6 +87,14 @@ class Trip {
   endTrip(){
     this.circle.setMap(null);
     this.stepNumber = null;
+    window.quantityTaxis -= 1;
+    this.setTaxiHTML();
+  }
+
+
+  setTaxiHTML(){
+    let label = document.getElementById("quantityTaxis");
+    label.innerHTML = `There are currently ${quantityTaxis} Green Taxis out and about!`;
   }
 
 

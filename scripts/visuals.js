@@ -20,8 +20,11 @@ class Visuals {
     this.database = firebase.database();
     this.retrieveData = this.retrieveData.bind(this);
     // this.resumeClock = this.resumeClock.bind(this);
+    window.quantityTaxis = 0;
     this.parsedData = [];
     this.retrieveData();
+    this.started = false;
+    this.setTaxiHTML = this.setTaxiHTML.bind(this);
 
   }
 
@@ -43,11 +46,20 @@ class Visuals {
   addTrips(){
     while(this.nextRideStarted() && this.dataIndex <= this.parsedData.length-1){
       let currentTrip = new Trip(this.parsedData[this.dataIndex], map);
+      window.quantityTaxis += 1;
+      this.setTaxiHTML();
       this.dataIndex += 1;
       this.currentTrips.push(currentTrip);
     }
 
   }
+
+
+   setTaxiHTML(){
+    let label = document.getElementById("quantityTaxis");
+    label.innerHTML = `There are currently ${quantityTaxis} Green Taxis out and about!`;
+  }
+
 
 
   incrementTrips(){
@@ -57,16 +69,18 @@ class Visuals {
   }
 
   startClock (){
-    let clock = document.getElementById("clock");
-    setInterval( ()=>{
-      if(!this.paused){
-        this.time.add(1, 's');
-        this.incrementTrips();
-        this.addTrips();
-        clock.innerHTML = this.time.format("HH mm ss");
-      }
-    }, 50);
-
+  if(this.started === false){
+      this.started = true;
+      let clock = document.getElementById("clock");
+      setInterval( ()=>{
+        if(!this.paused){
+          this.time.add(1, 's');
+          this.incrementTrips();
+          this.addTrips();
+          clock.innerHTML = this.time.format("HH mm ss");
+        }
+      }, 50);
+    }
   }
 
   pauseClock () {
@@ -96,6 +110,7 @@ class Visuals {
     });
     this.currentTrips = [];
     this.dataIndex = 0;
+    window.quantityTaxis = 0;
     this.paused = false;
   }
 

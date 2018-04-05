@@ -16462,7 +16462,7 @@ function initMap() {
     center: { lat: 40.72552, lng: -73.97254000000001 },
     radius: 10
   });
-  cityCircle.setMap(map);
+  // cityCircle.setMap(map);
   poly.setMap(map);
   map.addListener('click', addLatLng);
   // cityCircle.setCenter({lat: 38.933583 , lng: -77.045484 });
@@ -18305,8 +18305,11 @@ var Visuals = function () {
     this.database = firebase.database();
     this.retrieveData = this.retrieveData.bind(this);
     // this.resumeClock = this.resumeClock.bind(this);
+    window.quantityTaxis = 0;
     this.parsedData = [];
     this.retrieveData();
+    this.started = false;
+    this.setTaxiHTML = this.setTaxiHTML.bind(this);
   }
 
   _createClass(Visuals, [{
@@ -18329,9 +18332,17 @@ var Visuals = function () {
     value: function addTrips() {
       while (this.nextRideStarted() && this.dataIndex <= this.parsedData.length - 1) {
         var currentTrip = new _trip2.default(this.parsedData[this.dataIndex], map);
+        window.quantityTaxis += 1;
+        this.setTaxiHTML();
         this.dataIndex += 1;
         this.currentTrips.push(currentTrip);
       }
+    }
+  }, {
+    key: 'setTaxiHTML',
+    value: function setTaxiHTML() {
+      var label = document.getElementById("quantityTaxis");
+      label.innerHTML = 'There are currently ' + quantityTaxis + ' Green Taxis out and about!';
     }
   }, {
     key: 'incrementTrips',
@@ -18345,15 +18356,18 @@ var Visuals = function () {
     value: function startClock() {
       var _this2 = this;
 
-      var clock = document.getElementById("clock");
-      setInterval(function () {
-        if (!_this2.paused) {
-          _this2.time.add(1, 's');
-          _this2.incrementTrips();
-          _this2.addTrips();
-          clock.innerHTML = _this2.time.format("HH mm ss");
-        }
-      }, 50);
+      if (this.started === false) {
+        this.started = true;
+        var clock = document.getElementById("clock");
+        setInterval(function () {
+          if (!_this2.paused) {
+            _this2.time.add(1, 's');
+            _this2.incrementTrips();
+            _this2.addTrips();
+            clock.innerHTML = _this2.time.format("HH mm ss");
+          }
+        }, 50);
+      }
     }
   }, {
     key: 'pauseClock',
@@ -18385,6 +18399,7 @@ var Visuals = function () {
       });
       this.currentTrips = [];
       this.dataIndex = 0;
+      window.quantityTaxis = 0;
       this.paused = false;
     }
   }, {
@@ -18736,6 +18751,7 @@ var Trip = function () {
     this.move = this.move.bind(this);
     this.endTrip = this.endTrip.bind(this);
     this.increment = this.increment.bind(this);
+    this.setTaxiHTML = this.setTaxiHTML.bind(this);
   }
 
   _createClass(Trip, [{
@@ -18807,6 +18823,14 @@ var Trip = function () {
     value: function endTrip() {
       this.circle.setMap(null);
       this.stepNumber = null;
+      window.quantityTaxis -= 1;
+      this.setTaxiHTML();
+    }
+  }, {
+    key: 'setTaxiHTML',
+    value: function setTaxiHTML() {
+      var label = document.getElementById("quantityTaxis");
+      label.innerHTML = 'There are currently ' + quantityTaxis + ' Green Taxis out and about!';
     }
   }, {
     key: 'increment',

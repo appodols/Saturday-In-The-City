@@ -228,7 +228,7 @@ export default function initMap() {
           center: {lat: 40.72552, lng: -73.97254000000001},
           radius: 10
          });
-  cityCircle.setMap(map);
+  // cityCircle.setMap(map);
   poly.setMap(map);
   map.addListener('click', addLatLng);
   // cityCircle.setCenter({lat: 38.933583 , lng: -77.045484 });
