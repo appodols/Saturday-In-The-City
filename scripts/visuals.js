@@ -34,7 +34,7 @@ class Visuals {
         snapshot.forEach(childSnap => {
           this.parsedData.push(childSnap.val());
         });
-        this.parsedData = this.parsedData.slice(0,20);
+        // this.parsedData = this.parsedData.slice(0,20);
         window.parsedData = this.parsedData;
       });
     //reduce size of dataset

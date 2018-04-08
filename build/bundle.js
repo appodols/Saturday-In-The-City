@@ -16531,7 +16531,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 /*jshint esversion: 6 */
 function loadData() {
   return $.get({
-    url: '../data/taxi_shortened.csv'
+    url: '../data/taxi_abbreviated_1.csv'
   }).then(function (file) {
     _papaparse2.default.parse(file, {
       complete: function complete(results) {
@@ -16542,6 +16542,8 @@ function loadData() {
     });
   });
 }
+
+//url: '../data/taxi_shortened.csv'
 
 /***/ }),
 /* 126 */
@@ -16572,6 +16574,7 @@ var DataParser = function () {
     this.saveData = this.saveData.bind(this);
     this.generateDetails = this.generateDetails.bind(this);
     window.parseSteps = this.parseSteps.bind(this);
+    // window.parsePath = this.parsePath.bind(this);
   }
 
   _createClass(DataParser, [{
@@ -16608,6 +16611,7 @@ var DataParser = function () {
       directionsService.route(request, function (response, status) {
         if (status == google.maps.DirectionsStatus.OK) {
           trip.steps = parseSteps(response.routes[0].legs[0].steps);
+          // trip.path = parsePath(response.routes[0].overview_path);
           trips.push(trip);
         }
       });
@@ -16635,7 +16639,9 @@ var DataParser = function () {
   }]);
 
   return DataParser;
-}(); // end of input
+}();
+
+// end of input
 
 
 //each trip needs the following attributes
@@ -18322,7 +18328,7 @@ var Visuals = function () {
         snapshot.forEach(function (childSnap) {
           _this.parsedData.push(childSnap.val());
         });
-        _this.parsedData = _this.parsedData.slice(0, 20);
+        // this.parsedData = this.parsedData.slice(0,20);
         window.parsedData = _this.parsedData;
       });
       //reduce size of dataset

@@ -3,7 +3,7 @@ import DataParser from './data_parser';
 import Papa from 'papaparse';
 export default function loadData() {
   return $.get({
-      url: '../data/taxi_shortened.csv'
+      url: '../data/taxi_abbreviated_1.csv'
     }).then(file => {
       Papa.parse(file, {
         complete: (results) => {
@@ -14,3 +14,6 @@ export default function loadData() {
       });
     });
 }
+
+
+//url: '../data/taxi_shortened.csv'

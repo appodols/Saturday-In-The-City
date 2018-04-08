@@ -8,9 +8,8 @@ class DataParser{
     this.saveData = this.saveData.bind(this);
     this.generateDetails = this.generateDetails.bind(this);
     window.parseSteps = this.parseSteps.bind(this);
+    // window.parsePath = this.parsePath.bind(this);
   }
-
-
 
  saveData(){
    //careful here because we need this to these calls to be syncrnous and they won't be
@@ -41,11 +40,13 @@ class DataParser{
     directionsService.route(request, function (response, status) {
       if (status == google.maps.DirectionsStatus.OK) {
           trip.steps = parseSteps(response.routes[0].legs[0].steps);
+          // trip.path = parsePath(response.routes[0].overview_path);
           trips.push(trip);
       }
     });
 
    }
+
 
    parseLatLngs(latlngs){
     let latlngsCalled = [];
@@ -66,15 +67,9 @@ class DataParser{
    }
 
 
+}
 
-
-
-
-
-
-
-
- } // end of input
+  // end of input
 
 
 

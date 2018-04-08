@@ -10,12 +10,22 @@
 }
 
 
+body {
+  display: flex;
+  margin: 0;
+  width: 100vw;
+  height: 100vh;
+}
+
 .page_1{
   background: -webkit-linear-gradient(top,#000000,#434343);
   /*background: -moz-linear-gradient(top,#1d2671,#c33764);
   background: -ms-linear-gradient(top,#1d2671,#c33764);
   background: -o-linear-gradient(top,#1d2671,#c33764);*/
   background-size: cover;
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
   height: -webkit-fill-available;
   /*display: flex;
   /*margin-right: 100px;
@@ -100,9 +110,6 @@
   text-align: center;
   height: 100%;
 }
-
-
-
 
 
 
