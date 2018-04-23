@@ -4,9 +4,10 @@ class YellowParser{
     this.rows = rows;
     this.database = firebase.database();
     this.storage = firebase.storage();
-    window.trips = this.database.ref('trips');
+    window.trips = this.database.ref('trips-yellow');
     this.saveData = this.saveData.bind(this);
     this.generateDetails = this.generateDetails.bind(this);
+    this.timeParser = this.timeParser.bind(this);
     window.parseSteps = this.parseSteps.bind(this);
     // window.parsePath = this.parsePath.bind(this);
   }
@@ -21,27 +22,50 @@ class YellowParser{
         });
    }
 
+
+
+    timeParser(data){
+
+      data = data.split(" ");
+      let date_times = data[0].split("-");
+      let year = date_times[0];
+      let month = date_times[1];
+      let day = date_times[2];
+
+      let time_times = data[1].split(":");
+      let hours = time_times[0];
+      let minutes = time_times[1];
+      let seconds = time_times[2];
+      let ampm = hours > 12 ? 'PM' : 'AM';
+      let formatted = `${month}/${day}/${year} ${hours}:${minutes}:${seconds} ${ampm}`
+      debugger
+      return formatted;
+      //goal: "06/04/2016 05:24:06 AM"
+    }
+
+
      generateDetails(row){
       let trip = {};
       trip.pickupLong = parseFloat(row[5]);
       trip.pickupLat = parseFloat(row[6]);
-      trip.endLong = parseFloat(row[7]);
-      trip.endLat = parseFloat(row[8]);
-      trip.startTime = (row[1]);
-      trip.endTime = (row[2]);
+      trip.endLong = parseFloat(row[9]);
+      trip.endLat = parseFloat(row[10]);
+      trip.startTime = this.timeParser(row[1]);
+      trip.endTime = this.timeParser(row[2]);
+      console.log('made trip');
       let directionsService = new google.maps.DirectionsService();
       let request = {
                       origin: new google.maps.LatLng(trip.pickupLat, trip.pickupLong),
                       destination: new google.maps.LatLng(trip.endLat, trip.endLong),
                       travelMode: google.maps.TravelMode.DRIVING
                   };
-
-      //I could use apply / call here
     directionsService.route(request, function (response, status) {
+        console.log('in status stuff');
       if (status == google.maps.DirectionsStatus.OK) {
           trip.steps = parseSteps(response.routes[0].legs[0].steps);
           // trip.path = parsePath(response.routes[0].overview_path);
           trips.push(trip);
+          console.log('yay we pushed');
       }
     });
 

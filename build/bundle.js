@@ -16522,28 +16522,40 @@ var _data_parser = __webpack_require__(126);
 
 var _data_parser2 = _interopRequireDefault(_data_parser);
 
+var _yellow_parser = __webpack_require__(132);
+
+var _yellow_parser2 = _interopRequireDefault(_yellow_parser);
+
 var _papaparse = __webpack_require__(127);
 
 var _papaparse2 = _interopRequireDefault(_papaparse);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-/*jshint esversion: 6 */
 function loadData() {
   return $.get({
-    url: '../data/taxi_abbreviated_1.csv'
+    url: '../data/sample_yellow_taxi_data.csv'
   }).then(function (file) {
     _papaparse2.default.parse(file, {
       complete: function complete(results) {
         window.data = results.data;
-        // let parser = new DataParser(data);
-        //  parser.saveData();
+        var parser = new _yellow_parser2.default(data);
+        parser.saveData();
       }
     });
   });
 }
 
 //url: '../data/taxi_shortened.csv'
+// return $.get({
+//     url: '../data/taxi_abbreviated_1.csv'
+//   }).then(file => {
+//     Papa.parse(file, {
+//       complete: (results) => {
+//         window.data = results.data;
+//         let parser = new DataParser(data);
+//          parser.saveData()
+/*jshint esversion: 6 */
 
 /***/ }),
 /* 126 */
@@ -18326,7 +18338,7 @@ var Visuals = function () {
     value: function retrieveData() {
       var _this = this;
 
-      var ref = this.database.ref('trips');
+      var ref = this.database.ref('trips-yellow');
       ref.once('value').then(function (snapshot) {
         snapshot.forEach(function (childSnap) {
           _this.parsedData.push(childSnap.val());
@@ -18870,6 +18882,145 @@ var Trip = function () {
 }();
 
 exports.default = Trip;
+
+/***/ }),
+/* 132 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/*jshint esversion: 6 */
+var YellowParser = function () {
+  function YellowParser(rows) {
+    _classCallCheck(this, YellowParser);
+
+    this.rows = rows;
+    this.database = firebase.database();
+    this.storage = firebase.storage();
+    window.trips = this.database.ref('trips-yellow');
+    this.saveData = this.saveData.bind(this);
+    this.generateDetails = this.generateDetails.bind(this);
+    this.timeParser = this.timeParser.bind(this);
+    window.parseSteps = this.parseSteps.bind(this);
+    // window.parsePath = this.parsePath.bind(this);
+  }
+
+  _createClass(YellowParser, [{
+    key: "saveData",
+    value: function saveData() {
+      var _this = this;
+
+      //careful here because we need this to these calls to be syncrnous and they won't be
+      //you could use //setTimeOut and set up a conservative amount of time..say 2 seconds
+      this.rows.forEach(function (row, i) {
+        setTimeout(function () {
+          _this.generateDetails(row);
+        }, 1000 * i);
+      });
+    }
+  }, {
+    key: "timeParser",
+    value: function timeParser(data) {
+
+      data = data.split(" ");
+      var date_times = data[0].split("-");
+      var year = date_times[0];
+      var month = date_times[1];
+      var day = date_times[2];
+
+      var time_times = data[1].split(":");
+      var hours = time_times[0];
+      var minutes = time_times[1];
+      var seconds = time_times[2];
+      var ampm = hours > 12 ? 'PM' : 'AM';
+      var formatted = month + "/" + day + "/" + year + " " + hours + ":" + minutes + ":" + seconds + " " + ampm;
+      debugger;
+      return formatted;
+      //goal: "06/04/2016 05:24:06 AM"
+    }
+  }, {
+    key: "generateDetails",
+    value: function generateDetails(row) {
+      var trip = {};
+      trip.pickupLong = parseFloat(row[5]);
+      trip.pickupLat = parseFloat(row[6]);
+      trip.endLong = parseFloat(row[9]);
+      trip.endLat = parseFloat(row[10]);
+      trip.startTime = this.timeParser(row[1]);
+      trip.endTime = this.timeParser(row[2]);
+      console.log('made trip');
+      var directionsService = new google.maps.DirectionsService();
+      var request = {
+        origin: new google.maps.LatLng(trip.pickupLat, trip.pickupLong),
+        destination: new google.maps.LatLng(trip.endLat, trip.endLong),
+        travelMode: google.maps.TravelMode.DRIVING
+      };
+      directionsService.route(request, function (response, status) {
+        console.log('in status stuff');
+        if (status == google.maps.DirectionsStatus.OK) {
+          trip.steps = parseSteps(response.routes[0].legs[0].steps);
+          // trip.path = parsePath(response.routes[0].overview_path);
+          trips.push(trip);
+          console.log('yay we pushed');
+        }
+      });
+    }
+  }, {
+    key: "parseLatLngs",
+    value: function parseLatLngs(latlngs) {
+      var latlngsCalled = [];
+      latlngs.forEach(function (location) {
+        latlngsCalled.push([location.lat(), location.lng()]);
+      });
+      return latlngsCalled;
+    }
+  }, {
+    key: "parseSteps",
+    value: function parseSteps(steps) {
+      var _this2 = this;
+
+      var step_locations = [];
+      steps.forEach(function (step) {
+        step_locations.push(_defineProperty({}, step.duration.value, { latLngs: _this2.parseLatLngs(step.lat_lngs) }));
+      });
+      return step_locations;
+    }
+  }]);
+
+  return YellowParser;
+}();
+
+// end of input
+
+
+//each trip needs the following attributes
+//a) pickupLat
+//b) pickupLong
+//c) we will set the circle in the trip
+//d) new directions
+//e) question...how do we ensure that the async nature of making the directions request
+//f) we need the legs of the response
+//g) I need the steps
+//h) I need the overall response because I also need the last step
+//first we need the direction, and then we need to save the infromation
+//we can do this in 2 ways
+//a) we chain a promise together
+//or b) we pass in the infromation in the body of the async function
+//
+
+
+exports.default = YellowParser;
 
 /***/ })
 /******/ ]);
