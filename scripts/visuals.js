@@ -5,6 +5,7 @@ import Trip from './trip';
 class Visuals {
   constructor(){
     this.time = moment("2016-06-04 05:24:00");
+    this.startTime = moment("2016-06-04 05:24:00");
     window.time = this.time;
     this.interval = 300;
     this.startClock = this.startClock.bind(this);
@@ -25,7 +26,8 @@ class Visuals {
     this.retrieveData();
     this.started = false;
     this.setTaxiHTML = this.setTaxiHTML.bind(this);
-
+    this.setStartTime = this.setStartTime.bind(this);
+    this.everStarted = false;
   }
 
   retrieveData(){
@@ -69,6 +71,11 @@ class Visuals {
   }
 
   startClock (){
+
+
+
+
+
   if(this.started === false){
       this.started = true;
       let clock = document.getElementById("clock");
@@ -82,6 +89,18 @@ class Visuals {
       }, 50);
     }
   }
+
+  setStartTime(e){
+        let startTime = e.target.value.split(":");
+        let hours = startTime[0];
+        let minutes = startTime[1];
+        this.startTime = moment(`2016-06-04 ${hours}:${minutes}:00`);
+  }
+
+
+
+
+
 
   pauseClock () {
     let pauseButton = document.getElementsByClassName("pause-clock")[0];
@@ -113,14 +132,10 @@ class Visuals {
     this.paused = false;
     let pauseButton = document.getElementsByClassName("pause-clock")[0];
     pauseButton.innerHTML = 'Pause';
-    this.time = moment("2016-06-04 05:24:00");
+    this.time = this.startTime;
     let clock = document.getElementById("clock");
     clock.innerHTML = this.time.format("HH mm ss");
   }
-
-
-
-
 
 
   setup(){
@@ -128,9 +143,8 @@ class Visuals {
     $(".pause-clock").on('click', this.pauseClock);
     $(".restart-clock").on('click', this.restartClock);
     $(".resume-clock").on('click', this.resumeClock);
+    $(".start-time-selector").on('click',this.setStartTime);
   }
-
-
 
 }
 

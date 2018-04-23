@@ -18296,6 +18296,7 @@ var Visuals = function () {
     _classCallCheck(this, Visuals);
 
     this.time = (0, _moment2.default)("2016-06-04 05:24:00");
+    this.startTime = (0, _moment2.default)("2016-06-04 05:24:00");
     window.time = this.time;
     this.interval = 300;
     this.startClock = this.startClock.bind(this);
@@ -18316,6 +18317,8 @@ var Visuals = function () {
     this.retrieveData();
     this.started = false;
     this.setTaxiHTML = this.setTaxiHTML.bind(this);
+    this.setStartTime = this.setStartTime.bind(this);
+    this.everStarted = false;
   }
 
   _createClass(Visuals, [{
@@ -18376,6 +18379,14 @@ var Visuals = function () {
       }
     }
   }, {
+    key: 'setStartTime',
+    value: function setStartTime(e) {
+      var startTime = e.target.value.split(":");
+      var hours = startTime[0];
+      var minutes = startTime[1];
+      this.startTime = (0, _moment2.default)('2016-06-04 ' + hours + ':' + minutes + ':00');
+    }
+  }, {
     key: 'pauseClock',
     value: function pauseClock() {
       var pauseButton = document.getElementsByClassName("pause-clock")[0];
@@ -18408,7 +18419,7 @@ var Visuals = function () {
       this.paused = false;
       var pauseButton = document.getElementsByClassName("pause-clock")[0];
       pauseButton.innerHTML = 'Pause';
-      this.time = (0, _moment2.default)("2016-06-04 05:24:00");
+      this.time = this.startTime;
       var clock = document.getElementById("clock");
       clock.innerHTML = this.time.format("HH mm ss");
     }
@@ -18419,6 +18430,7 @@ var Visuals = function () {
       $(".pause-clock").on('click', this.pauseClock);
       $(".restart-clock").on('click', this.restartClock);
       $(".resume-clock").on('click', this.resumeClock);
+      $(".start-time-selector").on('click', this.setStartTime);
     }
   }]);
 
