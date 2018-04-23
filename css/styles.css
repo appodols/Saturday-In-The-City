@@ -34,7 +34,7 @@ body {
 }
 
 
-#quantityTaxis{
+#quantityTaxis {
   text-align: center;
   font-family: 'Roboto', sans-serif;
   font-size: 25px;
@@ -164,7 +164,7 @@ body {
   /*margin-right: 7px;*/
 }
 
-.restart-clock{
+.restart-clock {
   background: #607D8B;
 }
 
@@ -187,4 +187,21 @@ body {
   /*width: 100%;*/
   /*background-color: red;*/
   /*font-size: 14px;*/
+}
+
+
+.start-time-label{
+  color: #CFD8DC;
+  text-align: center;
+  font-family: 'Roboto', sans-serif;
+  font-size: 25px;
+}
+
+.start-time-selector{
+  font-size: 25px;
+  font-family: 'Roboto', sans-serif;
+}
+
+.select-start-time-container{
+  margin-left: 200px;
 }
