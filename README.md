@@ -1,25 +1,22 @@
-# Saturday in the City
-MVP:
+[Link to the Live Version]()
 
-This app will allow for users to see the daily taxi-trips from Green taxi on a Saturday in 2016, starting at sunrise, and going until sunrise the following Sunday.  
+# Saturday In The City
+  Saturday In The City visually displays taxi traffic as a representation of the movement in New York on a typical Saturday starting at sunrise at 5:25:00AM, and ending at sunrise on Sunday at 5:25:00AM the next morning.  
+## About
+  This visualization uses data from NYC Open Data to animate taxis as they drove on 6/6/2015.  Each circle on the map represents one single taxi-ride. Uptown rides are colored red; downtown rides are colored blue.  I assume that the driver drove the route recommended by Google Maps. The data is stored on Firebase to reduce the number of asynchronous requests that need to be made.
 
-Users will be represented as dots on a Google Maps API.
-
-Technologies, Libraries, APIs:
-
-Not quite sure yet. I will obviously have to use the Google Maps API, but have not quite figured out the rest.
-
-Wireframes:
-
+## Features
+ 1. Users can start / pause the animation
+ 2. Users can restart the animation
+ 3. Users can start the animation at any time within the 24 hour time cycle.
+  
+## Technologies Used
 
 
-Backend:
-Other than the data from NYCData, there won't be a back end.
+* Firebase
+* Javascript
+ 
 
-Implementation Timeline:
+## Future Updates
 
-1st) Allow for one ride to be displayed on the Google Maps API
-
-2hd) Allow for multiple rides to be displayed on the Google Maps API
-
-3rd: Allow for the additional visual features to be displayed, where you can see what direction cyclists are going based on their colors.
+The highest priority features is allowing both yellow and green taxis to be displayed.
