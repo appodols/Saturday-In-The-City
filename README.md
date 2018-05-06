@@ -11,7 +11,7 @@
  3. Users can start the animation at any time within the 24 hour time cycle.
  
 ## Implementation 
-  Each taxi is rendered as a shape on the Google Maps project.  NYC Open data provides starting longitude/ latitude and ending longitude /   latitude information about the taxi's route.  When given two coordinates, Google Maps API can generate waypoints.  I use these waypoints   to reset the location of each taxi; when done frequently enough this gives the illusion of movement. 
+  Each taxi is rendered as a shape on the Google Maps object.  NYC Open data provides starting longitude/ latitude and ending longitude /   latitude information about the taxi's route.  When given two coordinates, Google Maps API can generate waypoints.  I use these waypoints   to reset the location of each taxi; when done frequently enough this gives the illusion of movement. 
   
   When the user starts the clock in the application, I first go through the data (the data is chronologically organized, and add all taxis   whose start time is before the current time to the map.  This can be modeled by the following code:
   ```javascript
