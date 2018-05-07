@@ -28,6 +28,7 @@ class Visuals {
     this.setTaxiHTML = this.setTaxiHTML.bind(this);
     this.setStartTime = this.setStartTime.bind(this);
     this.everStarted = false;
+    console.log('constructor');
   }
 
   retrieveData(){
