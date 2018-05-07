@@ -38,7 +38,6 @@ class YellowParser{
       let seconds = time_times[2];
       let ampm = hours > 12 ? 'PM' : 'AM';
       let formatted = `${month}/${day}/${year} ${hours}:${minutes}:${seconds} ${ampm}`
-      debugger
       return formatted;
       //goal: "06/04/2016 05:24:06 AM"
     }
@@ -46,12 +45,12 @@ class YellowParser{
 
      generateDetails(row){
       let trip = {};
-      trip.pickupLong = parseFloat(row[5]);
-      trip.pickupLat = parseFloat(row[6]);
-      trip.endLong = parseFloat(row[9]);
-      trip.endLat = parseFloat(row[10]);
-      trip.startTime = this.timeParser(row[1]);
-      trip.endTime = this.timeParser(row[2]);
+      trip.pickupLong = parseFloat(row[6]);
+      trip.pickupLat = parseFloat(row[7]);
+      trip.endLong = parseFloat(row[10]);
+      trip.endLat = parseFloat(row[11]);
+      trip.startTime = this.timeParser(row[2]);
+      trip.endTime = this.timeParser(row[3]);
       console.log('made trip');
       let directionsService = new google.maps.DirectionsService();
       let request = {

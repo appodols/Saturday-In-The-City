@@ -32,7 +32,7 @@ class Visuals {
   }
 
   retrieveData(){
-    let ref = this.database.ref('trips-yellow');
+    let ref = this.database.ref('trips');
     ref.once('value').then(snapshot => {
         snapshot.forEach(childSnap => {
           this.parsedData.push(childSnap.val());
