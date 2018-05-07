@@ -21,6 +21,7 @@ class Trip {
     this.increment = this.increment.bind(this);
     this.setTaxiHTML = this.setTaxiHTML.bind(this);
     this.ended = false;
+    console.log('constructor');
   }
 
   startTimeAsMoment(){
