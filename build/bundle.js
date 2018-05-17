@@ -18446,13 +18446,11 @@ var Visuals = function () {
 
     this.time = (0, _moment2.default)("2015-06-06 05:24:00");
     this.startTime = (0, _moment2.default)("2015-06-06 05:24:00");
-    //note this needs to change for yellow / green taxis
     window.time = this.time;
     this.interval = 300;
     this.startClock = this.startClock.bind(this);
     this.currentTrips = [];
     this.dataIndex = 0;
-    //note this may need to change with the real data
     this.addTrips = this.addTrips.bind(this);
     this.incrementTrips = this.incrementTrips.bind(this);
     this.nextRideStarted = this.nextRideStarted.bind(this);
@@ -18484,10 +18482,8 @@ var Visuals = function () {
         snapshot.forEach(function (childSnap) {
           _this.parsedData.push(childSnap.val());
         });
-        // this.parsedData = this.parsedData.slice(0,20);
         window.parsedData = _this.parsedData;
       });
-      //reduce size of dataset
     }
   }, {
     key: 'addTrips',
@@ -18504,7 +18500,7 @@ var Visuals = function () {
     key: 'setTaxiHTML',
     value: function setTaxiHTML() {
       var label = document.getElementById("quantityTaxis");
-      label.innerHTML = 'There are currently ' + quantityTaxis + ' Green Taxis out and about!';
+      label.innerHTML = 'There are currently ' + quantityTaxis + ' Yellow Taxis out and about!';
     }
   }, {
     key: 'incrementTrips',
@@ -18514,12 +18510,23 @@ var Visuals = function () {
       });
     }
   }, {
+    key: 'nextRideStarted',
+    value: function nextRideStarted() {
+      if (this.dataIndex > this.parsedData.length - 1) return false;
+      var nextTrip = this.parsedData[this.dataIndex];
+      var nextStartTime = nextTrip.startTime;
+      var formatting = "MM-DD-YYYY hh:mm:ss a";
+      var nextTripMoment = (0, _moment2.default)(nextStartTime, formatting);
+      return nextTripMoment.isBefore(this.time);
+    }
+  }, {
     key: 'startClock',
     value: function startClock() {
       var _this2 = this;
 
       if (this.started === false) {
         this.started = true;
+        this.everStarted = true;
         var clock = document.getElementById("clock");
         setInterval(function () {
           if (!_this2.paused) {
@@ -18538,6 +18545,9 @@ var Visuals = function () {
       var hours = startTime[0];
       var minutes = startTime[1];
       this.startTime = (0, _moment2.default)('2015-06-06 ' + hours + ':' + minutes + ':00');
+      if (!this.everStarted) {
+        this.time = this.startTime;
+      }
     }
   }, {
     key: 'pauseClock',
@@ -18549,16 +18559,6 @@ var Visuals = function () {
       } else {
         pauseButton.innerHTML = 'Pause';
       }
-    }
-  }, {
-    key: 'nextRideStarted',
-    value: function nextRideStarted() {
-      if (this.dataIndex > this.parsedData.length - 1) return false;
-      var nextTrip = this.parsedData[this.dataIndex];
-      var nextStartTime = nextTrip.startTime;
-      var formatting = "MM-DD-YYYY hh:mm:ss a";
-      var nextTripMoment = (0, _moment2.default)(nextStartTime, formatting);
-      return nextTripMoment.isBefore(this.time);
     }
   }, {
     key: 'restartClock',

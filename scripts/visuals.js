@@ -6,13 +6,11 @@ class Visuals {
   constructor(){
     this.time = moment("2015-06-06 05:24:00");
     this.startTime = moment("2015-06-06 05:24:00");
-    //note this needs to change for yellow / green taxis
     window.time = this.time;
     this.interval = 300;
     this.startClock = this.startClock.bind(this);
     this.currentTrips = [];
     this.dataIndex = 0;
-    //note this may need to change with the real data
     this.addTrips = this.addTrips.bind(this);
     this.incrementTrips = this.incrementTrips.bind(this);
     this.nextRideStarted = this.nextRideStarted.bind(this);
@@ -40,10 +38,8 @@ class Visuals {
         snapshot.forEach(childSnap => {
           this.parsedData.push(childSnap.val());
         });
-        // this.parsedData = this.parsedData.slice(0,20);
         window.parsedData = this.parsedData;
       });
-    //reduce size of dataset
 }
 
 
@@ -63,7 +59,7 @@ class Visuals {
 
    setTaxiHTML(){
     let label = document.getElementById("quantityTaxis");
-    label.innerHTML = `There are currently ${quantityTaxis} Green Taxis out and about!`;
+    label.innerHTML = `There are currently ${quantityTaxis} Yellow Taxis out and about!`;
   }
 
 
@@ -74,6 +70,16 @@ class Visuals {
     });
   }
 
+  nextRideStarted(){
+    if(this.dataIndex > this.parsedData.length-1) return false;
+    let nextTrip = this.parsedData[this.dataIndex];
+    let nextStartTime = nextTrip.startTime;
+    let formatting = "MM-DD-YYYY hh:mm:ss a";
+    let nextTripMoment = moment(nextStartTime, formatting);
+    return nextTripMoment.isBefore(this.time);
+  }
+
+
   startClock (){
 
 
@@ -82,6 +88,7 @@ class Visuals {
 
   if(this.started === false){
       this.started = true;
+      this.everStarted = true;
       let clock = document.getElementById("clock");
       setInterval( ()=>{
         if(!this.paused){
@@ -99,9 +106,10 @@ class Visuals {
         let hours = startTime[0];
         let minutes = startTime[1];
         this.startTime = moment(`2015-06-06 ${hours}:${minutes}:00`);
+        if(!this.everStarted){
+          this.time = this.startTime;
+        }
   }
-
-
 
 
   pauseClock () {
@@ -115,14 +123,6 @@ class Visuals {
   }
 
 
-  nextRideStarted(){
-    if(this.dataIndex > this.parsedData.length-1) return false;
-    let nextTrip = this.parsedData[this.dataIndex];
-    let nextStartTime = nextTrip.startTime;
-    let formatting = "MM-DD-YYYY hh:mm:ss a";
-    let nextTripMoment = moment(nextStartTime, formatting);
-    return nextTripMoment.isBefore(this.time);
-  }
 
   restartClock(){
     this.currentTrips.forEach(trip=>{
