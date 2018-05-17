@@ -1,4 +1,4 @@
-[Link to the Live Version](https://appodols.github.io/Saturday-In-The-City/)
+[Link to the Live Version] -- to be updated soon
 
 # Saturday In The City
   Saturday In The City visually displays taxi traffic as a representation of the movement in New York on a typical Saturday starting at sunrise at 5:25:00AM, and ending at sunrise on Sunday at 5:25:00AM the next morning.  

@@ -4,8 +4,9 @@ import Trip from './trip';
 
 class Visuals {
   constructor(){
-    this.time = moment("2016-06-04 05:24:00");
-    this.startTime = moment("2016-06-04 05:24:00");
+    this.time = moment("2015-06-06 05:24:00");
+    this.startTime = moment("2015-06-06 05:24:00");
+    //note this needs to change for yellow / green taxis
     window.time = this.time;
     this.interval = 300;
     this.startClock = this.startClock.bind(this);
@@ -32,7 +33,7 @@ class Visuals {
   }
 
   retrieveData(){
-    let ref = this.database.ref('trips');
+    let ref = this.database.ref('trips-yellow');
     ref.once('value').then(snapshot => {
         snapshot.forEach(childSnap => {
           this.parsedData.push(childSnap.val());
@@ -95,10 +96,8 @@ class Visuals {
         let startTime = e.target.value.split(":");
         let hours = startTime[0];
         let minutes = startTime[1];
-        this.startTime = moment(`2016-06-04 ${hours}:${minutes}:00`);
+        this.startTime = moment(`2015-06-06 ${hours}:${minutes}:00`);
   }
-
-
 
 
 

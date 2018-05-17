@@ -16273,11 +16273,11 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 document.addEventListener("DOMContentLoaded", function () {
   (0, _init_map2.default)();
   var viz = new _visuals2.default();
-  // load_data().then(()=>{
-  //   console.log('setting up');
-  //   viz.setup();
-  // });
-  viz.setup();
+  (0, _load_data2.default)().then(function () {
+    viz.setup();
+  });
+  // viz.setup();
+
 
   //as long as we wait say 10 seconds we will be good, but ideally want to chain as a promise
 });
@@ -16729,7 +16729,6 @@ var YellowParser = function () {
       var year = date_times[0];
       var month = date_times[1];
       var day = date_times[2];
-
       var time_times = data[1].split(":");
       var hours = time_times[0];
       var minutes = time_times[1];
@@ -16761,6 +16760,7 @@ var YellowParser = function () {
         if (status == google.maps.DirectionsStatus.OK) {
           trip.steps = parseSteps(response.routes[0].legs[0].steps);
           // trip.path = parsePath(response.routes[0].overview_path);
+          debugger;
           trips.push(trip);
           console.log('yay we pushed');
         }
@@ -18445,8 +18445,9 @@ var Visuals = function () {
   function Visuals() {
     _classCallCheck(this, Visuals);
 
-    this.time = (0, _moment2.default)("2016-06-04 05:24:00");
-    this.startTime = (0, _moment2.default)("2016-06-04 05:24:00");
+    this.time = (0, _moment2.default)("2015-06-06 05:24:00");
+    this.startTime = (0, _moment2.default)("2015-06-06 05:24:00");
+    //note this needs to change for yellow / green taxis
     window.time = this.time;
     this.interval = 300;
     this.startClock = this.startClock.bind(this);
@@ -18477,7 +18478,7 @@ var Visuals = function () {
     value: function retrieveData() {
       var _this = this;
 
-      var ref = this.database.ref('trips');
+      var ref = this.database.ref('trips-yellow');
       ref.once('value').then(function (snapshot) {
         snapshot.forEach(function (childSnap) {
           _this.parsedData.push(childSnap.val());
@@ -18535,7 +18536,7 @@ var Visuals = function () {
       var startTime = e.target.value.split(":");
       var hours = startTime[0];
       var minutes = startTime[1];
-      this.startTime = (0, _moment2.default)('2016-06-04 ' + hours + ':' + minutes + ':00');
+      this.startTime = (0, _moment2.default)('2015-06-06 ' + hours + ':' + minutes + ':00');
     }
   }, {
     key: 'pauseClock',

@@ -31,7 +31,6 @@ class YellowParser{
       let year = date_times[0];
       let month = date_times[1];
       let day = date_times[2];
-
       let time_times = data[1].split(":");
       let hours = time_times[0];
       let minutes = time_times[1];
@@ -63,6 +62,7 @@ class YellowParser{
       if (status == google.maps.DirectionsStatus.OK) {
           trip.steps = parseSteps(response.routes[0].legs[0].steps);
           // trip.path = parsePath(response.routes[0].overview_path);
+          debugger
           trips.push(trip);
           console.log('yay we pushed');
       }
