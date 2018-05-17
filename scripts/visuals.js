@@ -25,6 +25,7 @@ class Visuals {
     window.quantityTaxis = 0;
     this.parsedData = [];
     this.retrieveData();
+    console.log('constructor-28');
     this.started = false;
     this.setTaxiHTML = this.setTaxiHTML.bind(this);
     this.setStartTime = this.setStartTime.bind(this);
@@ -33,6 +34,7 @@ class Visuals {
   }
 
   retrieveData(){
+    console.log('retrieving-data');
     let ref = this.database.ref('trips-yellow');
     ref.once('value').then(snapshot => {
         snapshot.forEach(childSnap => {

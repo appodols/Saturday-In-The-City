@@ -16273,11 +16273,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 document.addEventListener("DOMContentLoaded", function () {
   (0, _init_map2.default)();
   var viz = new _visuals2.default();
-  (0, _load_data2.default)().then(function () {
-    viz.setup();
-  });
-  // viz.setup();
-
+  // load_data().then(()=>{
+  //   viz.setup();
+  // });
+  viz.setup();
 
   //as long as we wait say 10 seconds we will be good, but ideally want to chain as a promise
 });
@@ -16532,19 +16531,19 @@ var _papaparse2 = _interopRequireDefault(_papaparse);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function loadData() {
-  return $.get({
-    url: '../data/vaughn_sample.csv'
-  }).then(function (file) {
-    _papaparse2.default.parse(file, {
-      complete: function complete(results) {
-        window.data = results.data;
-        var parser = new _yellow_parser2.default(data);
-        parser.saveData();
-      }
-    });
-  });
-}
+function loadData() {}
+// return $.get({
+//     url: '../data/vaughn_sample.csv'
+//   }).then(file => {
+//     Papa.parse(file, {
+//       complete: (results) => {
+//         window.data = results.data;
+//         let parser = new YellowParser(data);
+//          parser.saveData();
+//       }
+//     });
+//   });
+
 
 //url: '../data/taxi_shortened.csv'
 // return $.get({
@@ -18466,6 +18465,7 @@ var Visuals = function () {
     window.quantityTaxis = 0;
     this.parsedData = [];
     this.retrieveData();
+    console.log('constructor-28');
     this.started = false;
     this.setTaxiHTML = this.setTaxiHTML.bind(this);
     this.setStartTime = this.setStartTime.bind(this);
@@ -18478,6 +18478,7 @@ var Visuals = function () {
     value: function retrieveData() {
       var _this = this;
 
+      console.log('retrieving-data');
       var ref = this.database.ref('trips-yellow');
       ref.once('value').then(function (snapshot) {
         snapshot.forEach(function (childSnap) {
