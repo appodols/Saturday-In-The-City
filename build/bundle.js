@@ -18467,6 +18467,7 @@ var Visuals = function () {
     this.started = false;
     this.setTaxiHTML = this.setTaxiHTML.bind(this);
     this.setStartTime = this.setStartTime.bind(this);
+    this.setIndex = this.setIndex.bind(this);
     this.everStarted = false;
     console.log('constructor');
   }
@@ -18559,6 +18560,21 @@ var Visuals = function () {
       } else {
         pauseButton.innerHTML = 'Pause';
       }
+    }
+  }, {
+    key: 'setIndex',
+    value: function setIndex() {
+      while (this.dataIndex > this.parsedData.length - 1) {
+        var nextTrip = this.parsedData[this.dataIndex];
+        var nextStartTime = nextTrip.startTime;
+        var formatting = "MM-DD-YYYY hh:mm:ss a";
+        var nextTripMoment = (0, _moment2.default)(nextStartTime, formatting);
+        if (nextTripMoment.isAfter(this.time)) {
+          return this.dataIndex;
+        }
+        this.dataIndex += 1;
+      }
+      return -1;
     }
   }, {
     key: 'restartClock',

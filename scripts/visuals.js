@@ -27,6 +27,7 @@ class Visuals {
     this.started = false;
     this.setTaxiHTML = this.setTaxiHTML.bind(this);
     this.setStartTime = this.setStartTime.bind(this);
+    this.setIndex = this.setIndex.bind(this);
     this.everStarted = false;
     console.log('constructor');
   }
@@ -81,11 +82,6 @@ class Visuals {
 
 
   startClock (){
-
-
-
-
-
   if(this.started === false){
       this.started = true;
       this.everStarted = true;
@@ -122,6 +118,20 @@ class Visuals {
     }
   }
 
+
+  setIndex(){
+    while( this.dataIndex > this.parsedData.length-1){
+      let nextTrip = this.parsedData[this.dataIndex];
+      let nextStartTime = nextTrip.startTime;
+      let formatting = "MM-DD-YYYY hh:mm:ss a";
+      let nextTripMoment = moment(nextStartTime, formatting);
+      if(nextTripMoment.isAfter(this.time)){
+        return this.dataIndex;
+      }
+    this.dataIndex += 1;
+    }
+    return -1;
+  }
 
 
   restartClock(){
