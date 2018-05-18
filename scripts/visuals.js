@@ -23,17 +23,14 @@ class Visuals {
     window.quantityTaxis = 0;
     this.parsedData = [];
     this.retrieveData();
-    console.log('constructor-28');
     this.started = false;
     this.setTaxiHTML = this.setTaxiHTML.bind(this);
     this.setStartTime = this.setStartTime.bind(this);
     this.setIndex = this.setIndex.bind(this);
     this.everStarted = false;
-    console.log('constructor');
   }
 
   retrieveData(){
-    console.log('retrieving-data');
     let ref = this.database.ref('trips-yellow');
     ref.once('value').then(snapshot => {
         snapshot.forEach(childSnap => {
@@ -104,6 +101,7 @@ class Visuals {
         this.startTime = moment(`2015-06-06 ${hours}:${minutes}:00`);
         if(!this.everStarted){
           this.time = this.startTime;
+          this.setIndex();
         }
   }
 
@@ -120,7 +118,7 @@ class Visuals {
 
 
   setIndex(){
-    while( this.dataIndex > this.parsedData.length-1){
+    while( this.dataIndex < this.parsedData.length-1){
       let nextTrip = this.parsedData[this.dataIndex];
       let nextStartTime = nextTrip.startTime;
       let formatting = "MM-DD-YYYY hh:mm:ss a";
@@ -140,6 +138,7 @@ class Visuals {
    });
     this.currentTrips = [];
     this.dataIndex = 0;
+    this.setIndex();
     window.quantityTaxis = 0;
     this.paused = false;
     let pauseButton = document.getElementsByClassName("pause-clock")[0];
@@ -147,6 +146,7 @@ class Visuals {
     this.time = this.startTime;
     let clock = document.getElementById("clock");
     clock.innerHTML = this.time.format("HH mm ss");
+    debugger
   }
 
 

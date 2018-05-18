@@ -18463,13 +18463,11 @@ var Visuals = function () {
     window.quantityTaxis = 0;
     this.parsedData = [];
     this.retrieveData();
-    console.log('constructor-28');
     this.started = false;
     this.setTaxiHTML = this.setTaxiHTML.bind(this);
     this.setStartTime = this.setStartTime.bind(this);
     this.setIndex = this.setIndex.bind(this);
     this.everStarted = false;
-    console.log('constructor');
   }
 
   _createClass(Visuals, [{
@@ -18477,7 +18475,6 @@ var Visuals = function () {
     value: function retrieveData() {
       var _this = this;
 
-      console.log('retrieving-data');
       var ref = this.database.ref('trips-yellow');
       ref.once('value').then(function (snapshot) {
         snapshot.forEach(function (childSnap) {
@@ -18548,6 +18545,7 @@ var Visuals = function () {
       this.startTime = (0, _moment2.default)('2015-06-06 ' + hours + ':' + minutes + ':00');
       if (!this.everStarted) {
         this.time = this.startTime;
+        this.setIndex();
       }
     }
   }, {
@@ -18564,7 +18562,7 @@ var Visuals = function () {
   }, {
     key: 'setIndex',
     value: function setIndex() {
-      while (this.dataIndex > this.parsedData.length - 1) {
+      while (this.dataIndex < this.parsedData.length - 1) {
         var nextTrip = this.parsedData[this.dataIndex];
         var nextStartTime = nextTrip.startTime;
         var formatting = "MM-DD-YYYY hh:mm:ss a";
@@ -18584,6 +18582,7 @@ var Visuals = function () {
       });
       this.currentTrips = [];
       this.dataIndex = 0;
+      this.setIndex();
       window.quantityTaxis = 0;
       this.paused = false;
       var pauseButton = document.getElementsByClassName("pause-clock")[0];
@@ -18591,6 +18590,7 @@ var Visuals = function () {
       this.time = this.startTime;
       var clock = document.getElementById("clock");
       clock.innerHTML = this.time.format("HH mm ss");
+      debugger;
     }
   }, {
     key: 'setup',
